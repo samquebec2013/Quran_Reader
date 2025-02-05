@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- ScrollView pour le défilement vertical en mode paysage -->
+    <!-- ScrollView for vertical scrolling in landscape mode -->
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
@@ -16,10 +16,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
+
             android:contentDescription="Livre numérique à faire défiler"/>
     </ScrollView>
 
-    <!-- Menu caché qui apparaît lorsqu'on tape l'écran -->
+    <!-- Menu Layout (Initially Hidden) -->
     <LinearLayout
         android:id="@+id/menuLayout"
         android:layout_width="wrap_content"
@@ -33,38 +34,60 @@
 
         <ImageView
             android:id="@+id/openChapters"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:src="@drawable/ic_chapters"
             android:contentDescription="Ouvrir les chapitres"/>
 
         <ImageView
             android:id="@+id/savePage"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:src="@drawable/ic_save"
             android:contentDescription="Enregistrer la page"/>
 
         <ImageView
             android:id="@+id/shareApp"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:src="@drawable/ic_share"
             android:contentDescription="Partager l'application"/>
 
         <ImageView
             android:id="@+id/openBookmark"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:src="@drawable/ic_bookmark"
             android:contentDescription="Ouvrir les marque-pages"/>
 
         <ImageView
             android:id="@+id/openSettings"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:src="@drawable/ic_settings"
             android:contentDescription="Ouvrir les paramètres"/>
     </LinearLayout>
+
+    <!-- Close Button in Top-Right Corner -->
+    <ImageView
+        android:id="@+id/closeButton"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/ic_close"
+        android:visibility="gone"
+        android:background="?attr/selectableItemBackground"
+        android:padding="8dp"
+        android:contentDescription="Fermer l'application" />
+
+    <!-- Fragment container for the settings menu -->
+    <FrameLayout
+        android:id="@+id/fragmentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
 
 </RelativeLayout>

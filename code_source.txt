@@ -1,0 +1,1036 @@
+Fichier: app/src/main\AndroidManifest.xml
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Quran_Athman_Reader"
+        tools:targetApi="31">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
+--------------------------------------------------------------------------------
+Fichier: app/src/main\java\com\example\quran_athman_reader\BookmarkFragment.kt
+package com.example.quran_athman_reader
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import androidx.fragment.app.DialogFragment
+
+class BookmarkFragment : DialogFragment() {
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.fragment_bookmark, container, false)
+
+        val closeButton: Button = view.findViewById(R.id.closeButton)
+        closeButton.setOnClickListener { dismiss() }
+
+        return view
+    }
+}
+
+--------------------------------------------------------------------------------
+Fichier: app/src/main\java\com\example\quran_athman_reader\ButtonActions.kt
+package com.example.quran_athman_reader
+
+import android.content.Intent
+import android.view.View
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+
+object  ButtonActions {
+
+    fun openChapters(view: View) {
+        Toast.makeText(view.context, "Chapitres affichés", Toast.LENGTH_SHORT).show()
+        val activity = view.context as? AppCompatActivity
+        activity?.let {
+            ChaptersFragment().show(it.supportFragmentManager, "chaptersFragment")
+        }
+    }
+
+    fun savePage(view: View) {
+        Toast.makeText(view.context, "Page enregistrée", Toast.LENGTH_SHORT).show()
+        val activity = view.context as? AppCompatActivity
+        activity?.let {
+            BookmarkFragment().show(it.supportFragmentManager, "bookmarkFragment")
+        }
+    }
+
+    fun shareApp(view: View) {
+        val context = view.context
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, " D'oeuvre cette application de lecture de livres !")
+        }
+        context.startActivity(Intent.createChooser(intent, "Partager via"))
+    }
+
+    fun openBookmark(view: View) {
+        Toast.makeText(view.context, "Ouverture du marque-page", Toast.LENGTH_SHORT).show()
+        val activity = view.context as? AppCompatActivity
+        activity?.let {
+            BookmarkFragment().show(it.supportFragmentManager, "bookmarkFragment")
+        }
+    }
+
+    fun openSettings(view: View) {
+        Toast.makeText(view.context, "Ouverture des paramètres", Toast.LENGTH_SHORT).show()
+        val activity = view.context as? AppCompatActivity
+        activity?.let {
+            SettingsFragment().show(it.supportFragmentManager, "settingsFragment")
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+Fichier: app/src/main\java\com\example\quran_athman_reader\ChaptersFragment.kt
+package com.example.quran_athman_reader
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import androidx.fragment.app.DialogFragment
+
+class ChaptersFragment : DialogFragment() {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.fragment_chapters, container, false)
+
+        val closeButton: Button = view.findViewById(R.id.closeButton)
+        closeButton.setOnClickListener { dismiss() }
+
+        return view
+    }
+}
+
+--------------------------------------------------------------------------------
+Fichier: app/src/main\java\com\example\quran_athman_reader\ImageAdapter.kt
+package com.example.quran_athman_reader
+
+import android.content.Context
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.viewpager.widget.PagerAdapter
+
+class ImageAdapter(private val context: Context, private val images: List<Int>) : PagerAdapter() {
+
+    var isNightMode: Boolean = false // Default: Day Mode
+
+    override fun getCount(): Int {
+        return images.size
+    }
+
+    override fun isViewFromObject(view: View, `object`: Any): Boolean {
+        return view == `object`
+    }
+
+    override fun instantiateItem(container: ViewGroup, position: Int): Any {
+        val inflater = LayoutInflater.from(context)
+        val view = inflater.inflate(R.layout.item_image, container, false)
+        val imageView: ImageView = view.findViewById(R.id.imageView)
+
+        imageView.setImageResource(images[position])
+
+        // Apply night mode filter if enabled
+        if (isNightMode) {
+            applyNightMode(imageView)
+        }
+
+        container.addView(view)
+        return view
+    }
+
+    override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
+        container.removeView(`object` as View)
+    }
+
+    // Function to apply Night Mode (Invert Colors)
+    fun applyNightMode(imageView: ImageView) {
+        val matrix = ColorMatrix()
+        matrix.set(
+            floatArrayOf(
+                -1f,  0f,  0f,  0f, 255f, // Red channel inversion
+                0f, -1f,  0f,  0f, 255f, // Green channel inversion
+                0f,  0f, -1f,  0f, 255f, // Blue channel inversion
+                0f,  0f,  0f,  1f,   0f  // Alpha remains unchanged
+            )
+        )
+        imageView.colorFilter = ColorMatrixColorFilter(matrix)
+    }
+}
+
+--------------------------------------------------------------------------------
+Fichier: app/src/main\java\com\example\quran_athman_reader\MainActivity.kt
+package com.example.quran_athman_reader
+
+import android.content.SharedPreferences
+import android.os.Bundle
+import android.view.GestureDetector
+import android.view.MotionEvent
+import android.view.View
+import android.view.WindowManager
+import android.widget.ImageView
+import android.widget.LinearLayout
+import androidx.appcompat.app.AppCompatActivity
+import androidx.viewpager.widget.ViewPager
+
+class MainActivity : AppCompatActivity(), SettingsFragment.SettingsChangeListener {
+
+    private lateinit var viewPager: ViewPager
+    private lateinit var menuLayout: LinearLayout
+    private lateinit var gestureDetector: GestureDetector
+    private lateinit var closeButton: ImageView
+    private lateinit var openChaptersButton: ImageView
+    private lateinit var savePageButton: ImageView
+    private lateinit var shareAppButton: ImageView
+    private lateinit var openBookmarkButton: ImageView
+    private lateinit var openSettingsButton: ImageView
+    private lateinit var sharedPreferences: SharedPreferences
+
+    private val savedPages = mutableListOf<Int>() // Previous version restored()
+
+    private val imageList = arrayListOf(
+        R.drawable.page1,
+        R.drawable.page2,
+        R.drawable.page3
+    )
+
+    private lateinit var adapter: ImageAdapter
+    private var isNightMode = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        // Enable fullscreen mode
+        window.decorView.systemUiVisibility = (
+                View.SYSTEM_UI_FLAG_FULLSCREEN or
+                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
+                        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                )
+
+        // Prevent screen from sleeping
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+        // Initialize UI components
+        viewPager = findViewById(R.id.viewPager)
+        menuLayout = findViewById(R.id.menuLayout)
+        closeButton = findViewById(R.id.closeButton)
+        openChaptersButton = findViewById(R.id.openChapters)
+        savePageButton = findViewById(R.id.savePage)
+        shareAppButton = findViewById(R.id.shareApp)
+        openBookmarkButton = findViewById(R.id.openBookmark)
+        openSettingsButton = findViewById(R.id.openSettings)
+
+        // Get shared preferences for saving night mode state and bookmarks
+        sharedPreferences = getSharedPreferences("AppSettings", MODE_PRIVATE)
+        isNightMode = sharedPreferences.getBoolean("NightMode", false)
+        loadSavedPages()
+
+        // Initialize ViewPager with ImageAdapter
+        adapter = ImageAdapter(this, imageList)
+        adapter.isNightMode = isNightMode
+        viewPager.adapter = adapter
+        viewPager.offscreenPageLimit = imageList.size
+        viewPager.layoutDirection = View.LAYOUT_DIRECTION_RTL
+
+        // Close button is hidden by default
+        closeButton.visibility = View.GONE
+
+        // Close app when closeButton is clicked
+        closeButton.setOnClickListener { finish() }
+
+        // Open settings fragment
+        openSettingsButton.setOnClickListener {
+            val settingsFragment = SettingsFragment()
+            settingsFragment.show(supportFragmentManager, "SettingsFragment")
+        }
+
+        // Save current page
+        savePageButton.setOnClickListener {
+            val currentPage = viewPager.currentItem
+            if (!savedPages.contains(currentPage)) {
+                savedPages.add(currentPage)
+                savePages()
+            }
+        }
+
+        // Open saved pages dialog
+        openBookmarkButton.setOnClickListener {
+            showSavedPagesDialog()
+        }
+
+        // Gesture detection to toggle menu & close button
+        gestureDetector = GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
+            override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+                val isVisible = closeButton.visibility == View.VISIBLE
+                closeButton.visibility = if (isVisible) View.GONE else View.VISIBLE
+                menuLayout.visibility = if (isVisible) View.GONE else View.VISIBLE
+                return true
+            }
+        })
+
+        viewPager.setOnTouchListener { _, event -> gestureDetector.onTouchEvent(event) }
+
+        // Assign actions to buttons
+        openChaptersButton.setOnClickListener { ButtonActions.openChapters(it) }
+        shareAppButton.setOnClickListener { ButtonActions.shareApp(it) }
+    }
+
+    private fun showSavedPagesDialog() {
+        val dialog = SavedPagesDialog(savedPages, ::removeSavedPage) { page ->
+            viewPager.currentItem = page
+        }
+        dialog.show(supportFragmentManager, "SavedPagesDialog")
+    }
+
+    private fun removeSavedPage(page: Int) {
+        savedPages.remove(page)
+        savePages()
+    }
+
+    private fun savePages() {
+        val editor = sharedPreferences.edit()
+        editor.putString("savedPages", savedPages.joinToString(","))
+        editor.apply()
+    }
+
+    private fun loadSavedPages() {
+        val savedString = sharedPreferences.getString("savedPages", "")
+        if (!savedString.isNullOrEmpty()) {
+            savedPages.clear()
+            savedPages.addAll(savedString.split(",").mapNotNull { it.toIntOrNull() })
+            savedPages.addAll(savedString.split(",").map { it.toInt() })
+        }
+    }
+
+    override fun onNightModeChanged(isEnabled: Boolean) {
+        isNightMode = isEnabled
+        adapter.isNightMode = isNightMode
+        adapter.notifyDataSetChanged()
+        sharedPreferences.edit().putBoolean("NightMode", isNightMode).apply()
+    }
+}
+
+--------------------------------------------------------------------------------
+Fichier: app/src/main\java\com\example\quran_athman_reader\SavedPagesDialog.kt
+package com.example.quran_athman_reader
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.fragment.app.DialogFragment
+
+class SavedPagesDialog(
+    private val savedPages: List<Int>,
+    private val onRemovePage: (Int) -> Unit,
+    private val onPageSelected: (Int) -> Unit
+) : DialogFragment() {
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.dialog_saved_pages, container, false)
+        val pagesContainer: LinearLayout = view.findViewById(R.id.pagesContainer)
+        val closeButton: Button = view.findViewById(R.id.closeButton)
+
+        savedPages.forEach { page ->
+            val pageView = layoutInflater.inflate(R.layout.item_saved_page, pagesContainer, false)
+            val pageText: TextView = pageView.findViewById(R.id.pageNumber)
+            val removeButton: Button = pageView.findViewById(R.id.removePageButton)
+
+            pageText.text = "Page $page"
+            pageText.setOnClickListener {
+                onPageSelected(page)
+                dismiss()
+            }
+
+            removeButton.setOnClickListener {
+                onRemovePage(page)
+                dismiss()
+            }
+
+            pagesContainer.addView(pageView)
+        }
+
+        closeButton.setOnClickListener { dismiss() }
+        return view
+    }
+}
+
+--------------------------------------------------------------------------------
+Fichier: app/src/main\java\com\example\quran_athman_reader\SettingsFragment.kt
+package com.example.quran_athman_reader
+
+import android.content.Context
+import android.content.SharedPreferences
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.Switch
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.fragment.app.DialogFragment
+
+class SettingsFragment : DialogFragment() {
+
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var nightModeSwitch: Switch
+    private lateinit var resetButton: Button
+    private var listener: SettingsChangeListener? = null
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_settings, container, false)
+
+        // Initialize SharedPreferences
+        sharedPreferences = requireActivity().getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
+
+        // Find Views
+        nightModeSwitch = view.findViewById(R.id.nightModeSwitch)
+        val closeButton: Button = view.findViewById(R.id.closeButton)
+        resetButton = view.findViewById(R.id.resetButton)
+
+        // Load saved preference for Night Mode
+        val isNightMode = sharedPreferences.getBoolean("NightMode", false)
+        nightModeSwitch.isChecked = isNightMode
+        setNightMode(isNightMode)
+
+        // Handle switch toggle
+        nightModeSwitch.setOnCheckedChangeListener { _, isChecked ->
+            setNightMode(isChecked)
+            sharedPreferences.edit().putBoolean("NightMode", isChecked).apply()
+            listener?.onNightModeChanged(isChecked) // Notify MainActivity
+        }
+
+        // Close button
+        closeButton.setOnClickListener { dismiss() }
+
+        // Reset settings button
+        resetButton.setOnClickListener { resetSettings() }
+
+        return view
+    }
+
+    private fun setNightMode(enabled: Boolean) {
+        if (enabled) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
+    }
+
+    private fun resetSettings() {
+        // Reset Night Mode setting to default (Day Mode)
+        sharedPreferences.edit().putBoolean("NightMode", false).apply()
+        nightModeSwitch.isChecked = false
+        setNightMode(false)
+        listener?.onNightModeChanged(false) // Notify MainActivity
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is SettingsChangeListener) {
+            listener = context
+        }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        listener = null
+    }
+
+    interface SettingsChangeListener {
+        fun onNightModeChanged(isEnabled: Boolean)
+    }
+}
+
+--------------------------------------------------------------------------------
+Fichier: app/src/main\res\drawable\ic_launcher_background.xml
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#3DDC84"
+        android:pathData="M0,0h108v108h-108z" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M9,0L9,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M19,0L19,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M29,0L29,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M39,0L39,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M49,0L49,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M59,0L59,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M69,0L69,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M79,0L79,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M89,0L89,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M99,0L99,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,9L108,9"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,19L108,19"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,29L108,29"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,39L108,39"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,49L108,49"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,59L108,59"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,69L108,69"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,79L108,79"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,89L108,89"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,99L108,99"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M19,29L89,29"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M19,39L89,39"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M19,49L89,49"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M19,59L89,59"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M19,69L89,69"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M19,79L89,79"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M29,19L29,89"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M39,19L39,89"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M49,19L49,89"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M59,19L59,89"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M69,19L69,89"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M79,19L79,89"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+</vector>
+
+--------------------------------------------------------------------------------
+Fichier: app/src/main\res\drawable\ic_launcher_foreground.xml
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path android:pathData="M31,63.928c0,0 6.4,-11 12.1,-13.1c7.2,-2.6 26,-1.4 26,-1.4l38.1,38.1L107,108.928l-32,-1L31,63.928z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:endX="85.84757"
+                android:endY="92.4963"
+                android:startX="42.9492"
+                android:startY="49.59793"
+                android:type="linear">
+                <item
+                    android:color="#44000000"
+                    android:offset="0.0" />
+                <item
+                    android:color="#00000000"
+                    android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillType="nonZero"
+        android:pathData="M65.3,45.828l3.8,-6.6c0.2,-0.4 0.1,-0.9 -0.3,-1.1c-0.4,-0.2 -0.9,-0.1 -1.1,0.3l-3.9,6.7c-6.3,-2.8 -13.4,-2.8 -19.7,0l-3.9,-6.7c-0.2,-0.4 -0.7,-0.5 -1.1,-0.3C38.8,38.328 38.7,38.828 38.9,39.228l3.8,6.6C36.2,49.428 31.7,56.028 31,63.928h46C76.3,56.028 71.8,49.428 65.3,45.828zM43.4,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2c-0.3,-0.7 -0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C45.3,56.528 44.5,57.328 43.4,57.328L43.4,57.328zM64.6,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2s-0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C66.5,56.528 65.6,57.328 64.6,57.328L64.6,57.328z"
+        android:strokeWidth="1"
+        android:strokeColor="#00000000" />
+</vector>
+--------------------------------------------------------------------------------
+Fichier: app/src/main\res\layout\activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- ScrollView for vertical scrolling in landscape mode -->
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:scrollbars="vertical">
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+
+            android:contentDescription="Livre numérique à faire défiler"/>
+    </ScrollView>
+
+    <!-- Menu Layout (Initially Hidden) -->
+    <LinearLayout
+        android:id="@+id/menuLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:padding="10dp"
+        android:background="@android:color/darker_gray">
+
+        <ImageView
+            android:id="@+id/openChapters"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_chapters"
+            android:contentDescription="Ouvrir les chapitres"/>
+
+        <ImageView
+            android:id="@+id/savePage"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_save"
+            android:contentDescription="Enregistrer la page"/>
+
+        <ImageView
+            android:id="@+id/shareApp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_share"
+            android:contentDescription="Partager l'application"/>
+
+        <ImageView
+            android:id="@+id/openBookmark"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_bookmark"
+            android:contentDescription="Ouvrir les marque-pages"/>
+
+        <ImageView
+            android:id="@+id/openSettings"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_settings"
+            android:contentDescription="Ouvrir les paramètres"/>
+    </LinearLayout>
+
+    <!-- Close Button in Top-Right Corner -->
+    <ImageView
+        android:id="@+id/closeButton"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/ic_close"
+        android:visibility="gone"
+        android:background="?attr/selectableItemBackground"
+        android:padding="8dp"
+        android:contentDescription="Fermer l'application" />
+
+    <!-- Fragment container for the settings menu -->
+    <FrameLayout
+        android:id="@+id/fragmentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
+</RelativeLayout>
+
+--------------------------------------------------------------------------------
+Fichier: app/src/main\res\layout\dialog_saved_pages.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="6dp"
+    android:background="@android:color/white">
+    <Button
+        android:id="@+id/closeButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Close"/>
+
+    <TextView
+        android:layout_width="370dp"
+        android:layout_height="wrap_content"
+        android:text="Saved Pages"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/pagesContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"/>
+    </ScrollView>
+
+
+</LinearLayout>
+--------------------------------------------------------------------------------
+Fichier: app/src/main\res\layout\fragment_bookmark.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    android:padding="16dp">
+
+    <Button
+        android:id="@+id/closeButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="❌ Fermer"/>
+</LinearLayout>
+
+--------------------------------------------------------------------------------
+Fichier: app/src/main\res\layout\fragment_chapters.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    android:padding="16dp">
+
+    <ListView
+        android:id="@+id/chapterListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/closeButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="❌ Fermer"/>
+</LinearLayout>
+
+--------------------------------------------------------------------------------
+Fichier: app/src/main\res\layout\fragment_settings.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/darker_gray"
+    android:padding="16dp">
+
+    <Button
+        android:id="@+id/closeButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="❌ Close"/>
+
+    <Button
+        android:id="@+id/resetButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Reset" />
+
+    <Switch
+        android:id="@+id/nightModeSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Night Mode"
+        android:checked="false"/>
+
+    <Switch
+        android:id="@+id/switch2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Switch" />
+
+</LinearLayout>
+
+--------------------------------------------------------------------------------
+Fichier: app/src/main\res\layout\item_image.xml
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"/>
+</FrameLayout>
+
+--------------------------------------------------------------------------------
+Fichier: app/src/main\res\layout\item_saved_page.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="0dp"
+    android:layout_weight="0.8"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:background="@android:color/darker_gray">
+
+    <TextView
+        android:id="@+id/pageNumber"
+        android:clickable="true"
+        android:foreground="?attr/selectableItemBackground"
+        android:textColor="@android:color/holo_blue_light"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Page Number"
+        android:textSize="16sp"/>
+
+    <Button
+        android:id="@+id/removePageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="X"/>
+</LinearLayout>
+--------------------------------------------------------------------------------
+Fichier: app/src/main\res\mipmap-anydpi-v26\ic_launcher.xml
+<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@drawable/ic_launcher_background" />
+    <foreground android:drawable="@drawable/ic_launcher_foreground" />
+    <monochrome android:drawable="@drawable/ic_launcher_foreground" />
+</adaptive-icon>
+--------------------------------------------------------------------------------
+Fichier: app/src/main\res\mipmap-anydpi-v26\ic_launcher_round.xml
+<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@drawable/ic_launcher_background" />
+    <foreground android:drawable="@drawable/ic_launcher_foreground" />
+    <monochrome android:drawable="@drawable/ic_launcher_foreground" />
+</adaptive-icon>
+--------------------------------------------------------------------------------
+Fichier: app/src/main\res\values\colors.xml
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+</resources>
+--------------------------------------------------------------------------------
+Fichier: app/src/main\res\values\strings.xml
+<resources>
+    <string name="app_name">Quran_Athman_Reader</string>
+</resources>
+--------------------------------------------------------------------------------
+Fichier: app/src/main\res\values\themes.xml
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Quran_Athman_Reader" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+
+    <style name="Theme.Quran_Athman_Reader" parent="Base.Theme.Quran_Athman_Reader" />
+</resources>
+--------------------------------------------------------------------------------
+Fichier: app/src/main\res\values-night\themes.xml
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Quran_Athman_Reader" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your dark theme here. -->
+        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    </style>
+</resources>
+--------------------------------------------------------------------------------
+Fichier: app/src/main\res\xml\backup_rules.xml
+<?xml version="1.0" encoding="utf-8"?><!--
+   Sample backup rules file; uncomment and customize as necessary.
+   See https://developer.android.com/guide/topics/data/autobackup
+   for details.
+   Note: This file is ignored for devices older that API 31
+   See https://developer.android.com/about/versions/12/backup-restore
+-->
+<full-backup-content>
+    <!--
+   <include domain="sharedpref" path="."/>
+   <exclude domain="sharedpref" path="device.xml"/>
+-->
+</full-backup-content>
+--------------------------------------------------------------------------------
+Fichier: app/src/main\res\xml\data_extraction_rules.xml
+<?xml version="1.0" encoding="utf-8"?><!--
+   Sample data extraction rules file; uncomment and customize as necessary.
+   See https://developer.android.com/about/versions/12/backup-restore#xml-changes
+   for details.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <!-- TODO: Use <include> and <exclude> to control what is backed up.
+        <include .../>
+        <exclude .../>
+        -->
+    </cloud-backup>
+    <!--
+    <device-transfer>
+        <include .../>
+        <exclude .../>
+    </device-transfer>
+    -->
+</data-extraction-rules>
+--------------------------------------------------------------------------------
+Fichier: app/src/test\java\com\example\quran_athman_reader\ExampleUnitTest.kt
+package com.example.quran_athman_reader
+
+import org.junit.Test
+
+import org.junit.Assert.*
+
+/**
+ * Example local unit test, which will execute on the development machine (host).
+ *
+ * See [testing documentation](http://d.android.com/tools/testing).
+ */
+class ExampleUnitTest {
+    @Test
+    fun addition_isCorrect() {
+        assertEquals(4, 2 + 2)
+    }
+}
+--------------------------------------------------------------------------------

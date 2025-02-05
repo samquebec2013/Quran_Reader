@@ -1,0 +1,112 @@
+Fichier: app/src/main\AndroidManifest.xml
+
+Fichier: app/src/main\java\com\example\quran_athman_reader\BookmarkFragment.kt
+  Classes: BookmarkFragment
+  Fonctions: onCreateView
+
+Fichier: app/src/main\java\com\example\quran_athman_reader\ButtonActions.kt
+  Objets: ButtonActions
+  Fonctions: openChapters, savePage, shareApp, openBookmark, openSettings
+
+Fichier: app/src/main\java\com\example\quran_athman_reader\ChaptersFragment.kt
+  Classes: ChaptersFragment
+  Fonctions: onCreateView
+
+Fichier: app/src/main\java\com\example\quran_athman_reader\ImageAdapter.kt
+  Classes: ImageAdapter
+  Fonctions: getCount, isViewFromObject, instantiateItem, destroyItem, applyNightMode
+
+Fichier: app/src/main\java\com\example\quran_athman_reader\MainActivity.kt
+  Classes: MainActivity
+  Fonctions: onCreate, onSingleTapConfirmed, showSavedPagesDialog, removeSavedPage, savePages, loadSavedPages, onNightModeChanged
+
+Fichier: app/src/main\java\com\example\quran_athman_reader\SavedPagesDialog.kt
+  Classes: SavedPagesDialog
+  Fonctions: onCreateView
+
+Fichier: app/src/main\java\com\example\quran_athman_reader\SettingsFragment.kt
+  Classes: SettingsFragment
+  Fonctions: onCreateView, setNightMode, resetSettings, onAttach, onDetach, onNightModeChanged
+
+Fichier de ressource: app/src/main\res\drawable\ic_bookmark.png
+
+Fichier de ressource: app/src/main\res\drawable\ic_chapters.png
+
+Fichier de ressource: app/src/main\res\drawable\ic_close.png
+
+Fichier: app/src/main\res\drawable\ic_launcher_background.xml
+
+Fichier: app/src/main\res\drawable\ic_launcher_foreground.xml
+
+Fichier de ressource: app/src/main\res\drawable\ic_save.png
+
+Fichier de ressource: app/src/main\res\drawable\ic_settings.png
+
+Fichier de ressource: app/src/main\res\drawable\ic_share.png
+
+Fichier de ressource: app/src/main\res\drawable\page1.jpg
+
+Fichier de ressource: app/src/main\res\drawable\page2.jpg
+
+Fichier de ressource: app/src/main\res\drawable\page3.jpg
+
+Fichier: app/src/main\res\layout\activity_main.xml
+  Vues (IDs): scrollView, viewPager, menuLayout, openChapters, savePage, shareApp, openBookmark, openSettings, closeButton, fragmentContainer
+
+Fichier: app/src/main\res\layout\dialog_saved_pages.xml
+  Vues (IDs): closeButton, pagesContainer
+
+Fichier: app/src/main\res\layout\fragment_bookmark.xml
+  Vues (IDs): closeButton
+
+Fichier: app/src/main\res\layout\fragment_chapters.xml
+  Vues (IDs): chapterListView, closeButton
+
+Fichier: app/src/main\res\layout\fragment_settings.xml
+  Vues (IDs): closeButton, resetButton, nightModeSwitch, switch2
+
+Fichier: app/src/main\res\layout\item_image.xml
+  Vues (IDs): imageView
+
+Fichier: app/src/main\res\layout\item_saved_page.xml
+  Vues (IDs): pageNumber, removePageButton
+
+Fichier: app/src/main\res\mipmap-anydpi-v26\ic_launcher.xml
+
+Fichier: app/src/main\res\mipmap-anydpi-v26\ic_launcher_round.xml
+
+Fichier de ressource: app/src/main\res\mipmap-hdpi\ic_launcher.webp
+
+Fichier de ressource: app/src/main\res\mipmap-hdpi\ic_launcher_round.webp
+
+Fichier de ressource: app/src/main\res\mipmap-mdpi\ic_launcher.webp
+
+Fichier de ressource: app/src/main\res\mipmap-mdpi\ic_launcher_round.webp
+
+Fichier de ressource: app/src/main\res\mipmap-xhdpi\ic_launcher.webp
+
+Fichier de ressource: app/src/main\res\mipmap-xhdpi\ic_launcher_round.webp
+
+Fichier de ressource: app/src/main\res\mipmap-xxhdpi\ic_launcher.webp
+
+Fichier de ressource: app/src/main\res\mipmap-xxhdpi\ic_launcher_round.webp
+
+Fichier de ressource: app/src/main\res\mipmap-xxxhdpi\ic_launcher.webp
+
+Fichier de ressource: app/src/main\res\mipmap-xxxhdpi\ic_launcher_round.webp
+
+Fichier: app/src/main\res\values\colors.xml
+
+Fichier: app/src/main\res\values\strings.xml
+
+Fichier: app/src/main\res\values\themes.xml
+
+Fichier: app/src/main\res\values-night\themes.xml
+
+Fichier: app/src/main\res\xml\backup_rules.xml
+
+Fichier: app/src/main\res\xml\data_extraction_rules.xml
+
+Fichier: app/src/test\java\com\example\quran_athman_reader\ExampleUnitTest.kt
+  Classes: ExampleUnitTest
+  Fonctions: addition_isCorrect
