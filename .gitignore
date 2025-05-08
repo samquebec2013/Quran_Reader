@@ -1,24 +1,10 @@
-# Android build outputs
 /build
 *.apk
-*.ap_
-*.aab
-
-# Gradle cache (exclude, but keep wrapper)
 .gradle/
-
-# Local configuration
 local.properties
-
-# IDE files
 .idea/
-*.iml
-
-# Keystore files
 *.keystore
 *.jks
-
-# Miscellaneous
-*.log
-*.bin
+*.txt
 *.zip
+19marsOk/
