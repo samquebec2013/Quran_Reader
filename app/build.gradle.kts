@@ -4,17 +4,17 @@ plugins {
 }
 
 android {
-    namespace = "com.example.quran_athman_reader"
-    compileSdk = 35
+    namespace "com.education.quran8"
+    compileSdk 33  // Changed from 33 to 34
 
     defaultConfig {
-        applicationId = "com.example.quran_athman_reader"
-        minSdk = 24
-        targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        applicationId "com.education.quran8"
+        minSdk 21
+        targetSdk 33
+        versionCode 10009
+        versionName "2.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {

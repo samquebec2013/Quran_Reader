@@ -1,5 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="primary">#057368</color> <!-- Green dark Material -->
+    <color name="primaryVariant">#3700B3</color>
+    <color name="secondary">#03DAC5</color> <!-- Bleu-vert -->
+    <color name="secondaryVariant">#018786</color>
+    <color name="background">#121212</color> <!-- Mode sombre -->
+    <color name="surface">#1E1E1E</color>
+    <color name="error">#CF6679</color>
+    <color name="onPrimary">#FFFFFF</color>
+    <color name="onSecondary">#000000</color>
+    <color name="onBackground">#FFFFFF</color>
+    <color name="onSurface">#FFFFFF</color>
+    <color name="dark_primary">#121212</color>
+    <color name="dark_primary_variant">#1E1E1E</color>
+
+        <!-- Dark theme colors -->
+        <color name="dark_background">#121212</color>
+        <color name="dark_status_bar">#1E1E1E</color>
+        <color name="dark_navigation_bar">#1E1E1E</color>
+
+        <!-- Other colors -->
+        <color name="dark_primary2">#212121</color>
+        <color name="dark_primary_variant2">#424242</color>
+
+
 </resources>

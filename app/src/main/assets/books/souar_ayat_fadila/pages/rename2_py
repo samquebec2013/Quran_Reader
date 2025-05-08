@@ -1,0 +1,12 @@
+import os
+
+# Rename from the highest number to the lowest to avoid overwriting
+for i in range(54, 13, -1):
+    old_name = f"page{i}.jpg"
+    new_name = f"page{i - 1}.jpg"
+    
+    if os.path.exists(old_name):
+        os.rename(old_name, new_name)
+        print(f"Renamed {old_name} → {new_name}")
+    else:
+        print(f"Skipped {old_name}, file not found.")

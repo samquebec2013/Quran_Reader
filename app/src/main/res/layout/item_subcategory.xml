@@ -1,0 +1,9 @@
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/subcategoryText"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textSize="16sp"
+    android:padding="10dp"
+    android:textColor="@android:color/black"
+    android:gravity="center"
+    android:background="#FFF8E1"/>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>كيفية استخدام تطبيق قارئ القرآن</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            text-align: center;
+            direction: rtl;
+        }
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        p {
+            font-size: 18px;
+            color: #555;
+        }
+        .slide {
+            display: none;
+            padding: 20px;
+        }
+        .active {
+            display: block;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            background: #2196F3;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background: #1976D2;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div id="slide1" class="slide active">
+        <h1>كيفية استخدام تطبيق قارئ القرآن</h1>
+        <p>دليل للمستخدم الجديد</p>
+        <p> انقر على الشاشة لإظهار لوحةالتحكم</p>
+        <p>• اسحب يمينًا أو يسارًا للتنقل بين الصفحات.<br>
+        </p>
+        <img src="images/Coran_image.jpeg" alt="شاشة الرئيسية" />
+
+    </div>
+    <div id="slide2" class="slide">
+        <h2>الخطوة 1: إضافة علامة</h2>
+        <p>• من القائمة، انقر على أيقونة العلامة لحفظ الصفحة.<br>
+            • يمكنك رؤية العلامات من أيقونة العلامات.</p>
+        <img src="images/save_retrieve.jpeg" alt="إضافة علامة" />
+    </div>
+
+    <div id="slide3" class="slide">
+        <h2>الخطوة 2: الفهرس</h2>
+        <p>• من القائمة، انقر على أيقونة الفهرس.<br>
+            انقر على عناوين الفهرس لرأيةالعناوين.</p>
+        <img src="images/toc.jpeg" alt="الفرس" />
+    </div>
+
+    <div id="slide4" class="slide">
+        <h2> الخطوة 3: الإعدادات</h2>
+        <p> من الشاشة الرئيسية إضغط على زر الإعدادات<br>
+            يمكنك التحكم في الوضع الليلي، اختيار اتجاه التصفح عمودي/أفقي، ملئ الشاشة، ايقاف غلق الشاشة     </p>
+        <img src="images/settings2.jpeg" alt="الإعدادات" />
+    </div>
+
+    <div id="slide5" class="slide">
+        <h2> الخطوة 4: فتح كتاب جديد</h2>
+        <p> من الشاشة الرئيسية، اضغط على الزر بصورة المنزل واختر كتابًا من القائمة.<br>
+                            <p>   انقر على صورة الكتاب لفتحه. يمكنك من زر الإعدادات بصورة كتاب أن تتحكم في المكتبة بإضافة كتاب، أو اختيار كتاب رئيسي، أو حذفه من المكتبة</p>
+        <img src="images/library1.jpeg" alt="اختيار الكتاب" />
+        <img src="images/library2.jpeg" alt="اختيار الكتاب" />
+        <img src="images/library3.jpeg" alt="اختيار الكتاب" />
+    </div>
+
+    <div id="slide6" class="slide">
+        <h2> الخطوة 5:مشاركة التطبيق </h2>
+        <p> من الشاشة الرئيسية إضغط على زر المشاركة<br>
+                 </p>
+        <img src="images/share.jpeg" alt="المشاركة" />
+    </div>
+
+
+
+
+
+
+    <button onclick="prevSlide()">السابق</button>
+    <button onclick="nextSlide()">التالي</button>
+
+</div>
+
+<script>
+    let currentSlide = 1;
+    const totalSlides = 5;
+
+    function showSlide(n) {
+        document.querySelectorAll('.slide').forEach(slide => slide.classList.remove('active'));
+        document.getElementById(`slide${n}`).classList.add('active');
+    }
+
+    function nextSlide() {
+        if (currentSlide < totalSlides) {
+            currentSlide++;
+            showSlide(currentSlide);
+        }
+    }
+
+    function prevSlide() {
+        if (currentSlide > 1) {
+            currentSlide--;
+            showSlide(currentSlide);
+        }
+    }
+</script>
+</body>
+</html>

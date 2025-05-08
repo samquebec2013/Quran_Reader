@@ -1,26 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="0dp"
-    android:layout_weight="0.8"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="8dp"
-    android:background="@android:color/darker_gray">
+    android:layout_margin="6dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp"
+    android:background="@android:color/white">
 
-    <TextView
-        android:id="@+id/pageNumber"
-        android:clickable="true"
-        android:foreground="?attr/selectableItemBackground"
-        android:textColor="@android:color/holo_blue_light"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Page Number"
-        android:textSize="16sp"/>
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:gravity="center_vertical"
+        android:background="#FDF7C9">
 
-    <Button
-        android:id="@+id/removePageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="X"/>
-</LinearLayout>
+        <!-- Page Number -->
+        <TextView
+            android:id="@+id/pageNumber"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="📖 Page Number"
+            android:textSize="16sp"
+            android:textColor="@android:color/black"
+            android:clickable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:padding="8dp" />
+
+        <!-- Remove Button -->
+        <Button
+            android:id="@+id/removePageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="❌"
+            android:backgroundTint="#DBC91B"
+            android:textColor="@android:color/white"
+            android:elevation="4dp"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

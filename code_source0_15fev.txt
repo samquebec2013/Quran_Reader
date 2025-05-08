@@ -1,0 +1,2940 @@
+Fichier: app/src/main\AndroidManifest.xml
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Quran_Athman_Reader"
+        tools:targetApi="31">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
+
+Fichier: app/src/main\java\com\example\quran_athman_reader\BookmarkFragment.kt
+package com.example.quran_athman_reader
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import androidx.fragment.app.DialogFragment
+
+class BookmarkFragment : DialogFragment() {
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.fragment_bookmark, container, false)
+
+        val closeButton: Button = view.findViewById(R.id.closeButton)
+        closeButton.setOnClickListener { dismiss() }
+
+        return view
+    }
+}
+
+Fichier: app/src/main\java\com\example\quran_athman_reader\ButtonActions.kt
+package com.example.quran_athman_reader
+
+import android.content.Intent
+import android.view.View
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+
+object  ButtonActions {
+
+    fun openChapters(view: View) {
+        Toast.makeText(view.context, "Chapitres affichés", Toast.LENGTH_SHORT).show()
+        val activity = view.context as? AppCompatActivity
+        activity?.let {
+            ChaptersFragment().show(it.supportFragmentManager, "chaptersFragment")
+        }
+    }
+
+    fun savePage(view: View) {
+        Toast.makeText(view.context, "Page enregistrée", Toast.LENGTH_SHORT).show()
+        val activity = view.context as? AppCompatActivity
+        activity?.let {
+            BookmarkFragment().show(it.supportFragmentManager, "bookmarkFragment")
+        }
+    }
+
+    fun shareApp(view: View) {
+        val context = view.context
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, " lecture de quran !")
+        }
+        context.startActivity(Intent.createChooser(intent, "Partager via"))
+    }
+
+    fun openBookmark(view: View) {
+        Toast.makeText(view.context, "Ouverture du marque-page", Toast.LENGTH_SHORT).show()
+        val activity = view.context as? AppCompatActivity
+        activity?.let {
+            BookmarkFragment().show(it.supportFragmentManager, "bookmarkFragment")
+        }
+    }
+
+    fun openSettings(view: View) {
+        Toast.makeText(view.context, "Ouverture des paramètres", Toast.LENGTH_SHORT).show()
+        val activity = view.context as? AppCompatActivity
+        activity?.let {
+            SettingsFragment().show(it.supportFragmentManager, "settingsFragment")
+        }
+    }
+}
+
+Fichier: app/src/main\java\com\example\quran_athman_reader\Category_Adapter.kt
+package com.example.quran_athman_reader
+import com.example.quran_athman_reader.Subcategory  // ✅ Ajout de l'import manquant
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+
+class CategoryAdapter(
+    private val categories: List<Category>,
+    private val onItemSelected: (Subcategory) -> Unit  // ✅ Spécifier explicitement le type
+) : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
+
+    inner class CategoryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val categoryTitle: TextView = view.findViewById(R.id.categoryTitle)
+        val subcategoriesRecyclerView: RecyclerView = view.findViewById(R.id.recyclerViewSubcategories)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_category, parent, false)
+        return CategoryViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
+        val category = categories[position]
+
+        // Affichage du titre de la catégorie
+        holder.categoryTitle.text = category.title
+
+        // Toggle affichage des sous-catégories
+        holder.categoryTitle.setOnClickListener {
+            holder.subcategoriesRecyclerView.visibility =
+                if (holder.subcategoriesRecyclerView.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+        }
+
+        // Initialisation du RecyclerView pour les sous-catégories
+        holder.subcategoriesRecyclerView.layoutManager = LinearLayoutManager(holder.itemView.context)
+        holder.subcategoriesRecyclerView.adapter = SubcategoryAdapter(
+            category.subcategories,
+            onItemSelected  // ✅ Kotlin comprend maintenant le type
+        )
+    }
+
+    override fun getItemCount(): Int = categories.size
+}
+
+Fichier: app/src/main\java\com\example\quran_athman_reader\ChaptersFragment.kt
+package com.example.quran_athman_reader
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import androidx.fragment.app.DialogFragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+// ✅ Import de la classe Subcategory depuis Data.kt
+import com.example.quran_athman_reader.Subcategory
+
+class ChaptersFragment : DialogFragment() {
+
+    private var onPageSelected: ((String) -> Unit)? = null
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.fragment_chapters, container, false)
+
+        // Use the filtered data from Data.kt
+        val recyclerView: RecyclerView = view.findViewById(R.id.chapterRecyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = CategoryAdapter(chapters) { page ->
+            // Pass the selected page number back to the activity
+            onPageSelected?.invoke(page.toString())
+            dismiss()
+        }
+
+        // Close button
+        val closeButton: Button = view.findViewById(R.id.closeButton)
+        closeButton.setOnClickListener { dismiss() }
+
+        return view
+    }
+
+    fun setOnPageSelectedListener(listener: (String) -> Unit) {
+        onPageSelected = listener
+    }
+}
+
+Fichier: app/src/main\java\com\example\quran_athman_reader\Data.kt
+package com.example.quran_athman_reader
+
+// Data classes
+data class Category(
+    val title: String,
+    val subcategories: List<Subcategory> = emptyList()
+)
+
+data class Subcategory(
+    val name: String,
+    val page: String
+)
+
+// Filtered Data
+val chapters = listOf(
+    Category("📖 Sourat", listOf(
+        Subcategory("الفاتحة", "2"),
+        Subcategory("البقرة", "3"),
+        Subcategory("آل عمران", "42"),
+        Subcategory("النساء", "63"),
+        Subcategory("المائدة", "87"),
+        Subcategory("الأنعام", "105"),
+        Subcategory("الأعراف", "123"),
+        Subcategory("الأنفال", "143"),
+        Subcategory("التوبة", "151"),
+        Subcategory("يونس", "168"),
+        Subcategory("هود", "179"),
+        Subcategory("يوسف", "191"),
+        Subcategory("الرعد", "201"),
+        Subcategory("إبراهيم", "207"),
+        Subcategory("الحجر", "212"),
+        Subcategory("النحل", "216"),
+        Subcategory("الإسراء", "228"),
+        Subcategory("الكهف", "237"),
+        Subcategory("مريم", "246"),
+        Subcategory("طه", "252"),
+        Subcategory("الأنبياء", "260"),
+        Subcategory("الحج", "268"),
+        Subcategory("المؤمنون", "276"),
+        Subcategory("النور", "282"),
+        Subcategory("الفرقان", "290"),
+        Subcategory("الشعراء", "296"),
+        Subcategory("النمل", "303"),
+        Subcategory("القصص", "311"),
+        Subcategory("العنكبوت", "319"),
+        Subcategory("الروم", "325"),
+        Subcategory("لقمان", "330"),
+        Subcategory("السجدة", "333"),
+        Subcategory("الأحزاب", "336"),
+        Subcategory("سبأ", "345"),
+        Subcategory("فاطر", "350"),
+        Subcategory("يس", "354"),
+        Subcategory("الصافات", "359"),
+        Subcategory("ص", "365"),
+        Subcategory("الزمر", "369"),
+        Subcategory("غافر", "376"),
+        Subcategory("فصلت", "383"),
+        Subcategory("الشورى", "388"),
+        Subcategory("الزخرف", "394"),
+        Subcategory("الدخان", "399"),
+        Subcategory("الجاثية", "401"),
+        Subcategory("الأحقاف", "404"),
+        Subcategory("محمد", "407"),
+        Subcategory("الفتح", "410"),
+        Subcategory("الحجرات", "414"),
+        Subcategory("ق", "416"),
+        Subcategory("الذاريات", "419"),
+        Subcategory("الطور", "421"),
+        Subcategory("النجم", "423"),
+        Subcategory("القمر", "425"),
+        Subcategory("الرحمن", "428"),
+        Subcategory("الواقعة", "430"),
+        Subcategory("الحديد", "432"),
+        Subcategory("المجادلة", "436"),
+        Subcategory("الحشر", "438"),
+        Subcategory("الممتحنة", "441"),
+        Subcategory("الصف", "443"),
+        Subcategory("الجمعة", "444"),
+        Subcategory("المنافقون", "445"),
+        Subcategory("التغابن", "446"),
+        Subcategory("الطلاق", "448"),
+        Subcategory("التحريم", "450"),
+        Subcategory("الملك", "452"),
+        Subcategory("القلم", "453"),
+        Subcategory("الحاقة", "455"),
+        Subcategory("المعارج", "457"),
+        Subcategory("نوح", "458"),
+        Subcategory("الجن", "460"),
+        Subcategory("المزمل", "461"),
+        Subcategory("المدثر", "462"),
+        Subcategory("القيامة", "464"),
+        Subcategory("الإنسان", "465"),
+        Subcategory("المرسلات", "466"),
+        Subcategory("النبأ", "468"),
+        Subcategory("النازعات", "469"),
+        Subcategory("عبس", "470"),
+        Subcategory("التكوير", "471"),
+        Subcategory("الإنفطار", "472"),
+        Subcategory("المطففين", "472"),
+        Subcategory("الإنشقاق", "473"),
+        Subcategory("البروج", "474"),
+        Subcategory("الطارق", "475"),
+        Subcategory("الأعلى", "476"),
+        Subcategory("الغاشية", "476"),
+        Subcategory("الفجر", "477"),
+        Subcategory("البلد", "478"),
+        Subcategory("الشمس", "478"),
+        Subcategory("الليل", "479"),
+        Subcategory("الضحى", "479"),
+        Subcategory("الشرح", "480"),
+        Subcategory("التين", "480"),
+        Subcategory("العلق", "480"),
+        Subcategory("القدر", "481"),
+        Subcategory("البينة", "481"),
+        Subcategory("الزلزلة", "482"),
+        Subcategory("العاديات", "482"),
+        Subcategory("القارعة", "483"),
+        Subcategory("التكاثر", "483"),
+        Subcategory("العصر", "483"),
+        Subcategory("الهمزة", "484"),
+        Subcategory("الفيل", "484"),
+        Subcategory("قريش", "484"),
+        Subcategory("الماعون", "485"),
+        Subcategory("الكوثر", "485"),
+        Subcategory("الكافرون", "485"),
+        Subcategory("النصر", "485"),
+        Subcategory("المسد", "486"),
+        Subcategory("الإخلاص", "486"),
+        Subcategory("الفلق", "486"),
+        Subcategory("الناس", "486")
+    )),
+    Category("📚 Hizb", listOf(
+        Subcategory("حزب 1", "3"),
+        Subcategory("حزب 2", "12"),
+        Subcategory("حزب 3", "20"),
+        Subcategory("حزب 4", "28"),
+        Subcategory("حزب 5", "36"),
+        Subcategory("حزب 6", "44"),
+        Subcategory("حزب 7", "52"),
+        Subcategory("حزب 8", "60"),
+        Subcategory("حزب 9", "68"),
+        Subcategory("حزب 10", "76"),
+        Subcategory("حزب 11", "84"),
+        Subcategory("حزب 12", "92"),
+        Subcategory("حزب 13", "100"),
+        Subcategory("حزب 14", "108"),
+        Subcategory("حزب 15", "116"),
+        Subcategory("حزب 16", "124"),
+        Subcategory("حزب 17", "132"),
+        Subcategory("حزب 18", "140"),
+        Subcategory("حزب 19", "148"),
+        Subcategory("حزب 20", "156"),
+        Subcategory("حزب 21", "164"),
+        Subcategory("حزب 22", "172"),
+        Subcategory("حزب 23", "180"),
+        Subcategory("حزب 24", "188"),
+        Subcategory("حزب 25", "196"),
+        Subcategory("حزب 26", "204"),
+        Subcategory("حزب 27", "212"),
+        Subcategory("حزب 28", "220"),
+        Subcategory("حزب 29", "228"),
+        Subcategory("حزب 30", "236"),
+        Subcategory("حزب 31", "244"),
+        Subcategory("حزب 32", "252"),
+        Subcategory("حزب 33", "260"),
+        Subcategory("حزب 34", "268"),
+        Subcategory("حزب 35", "276"),
+        Subcategory("حزب 36", "284"),
+        Subcategory("حزب 37", "292"),
+        Subcategory("حزب 38", "300"),
+        Subcategory("حزب 39", "308"),
+        Subcategory("حزب 40", "316"),
+        Subcategory("حزب 41", "324"),
+        Subcategory("حزب 42", "332"),
+        Subcategory("حزب 43", "340"),
+        Subcategory("حزب 44", "348"),
+        Subcategory("حزب 45", "356"),
+        Subcategory("حزب 46", "364"),
+        Subcategory("حزب 47", "372"),
+        Subcategory("حزب 48", "380"),
+        Subcategory("حزب 49", "388"),
+        Subcategory("حزب 50", "396"),
+        Subcategory("حزب 51", "404"),
+        Subcategory("حزب 52", "412"),
+        Subcategory("حزب 53", "420"),
+        Subcategory("حزب 54", "428"),
+        Subcategory("حزب 55", "436"),
+        Subcategory("حزب 56", "444"),
+        Subcategory("حزب 57", "452"),
+        Subcategory("حزب 58", "460"),
+        Subcategory("حزب 59", "468"),
+        Subcategory("حزب 60", "476")
+    )),
+    Category("📜 Jozh", listOf(
+        Subcategory("جزء 1", "3"),
+        Subcategory("جزء 2", "20"),
+        Subcategory("جزء 3", "36"),
+        Subcategory("جزء 4", "52"),
+        Subcategory("جزء 5", "68"),
+        Subcategory("جزء 6", "84"),
+        Subcategory("جزء 7", "100"),
+        Subcategory("جزء 8", "116"),
+        Subcategory("جزء 9", "132"),
+        Subcategory("جزء 10", "148"),
+        Subcategory("جزء 11", "164"),
+        Subcategory("جزء 12", "180"),
+        Subcategory("جزء 13", "196"),
+        Subcategory("جزء 14", "212"),
+        Subcategory("جزء 15", "228"),
+        Subcategory("جزء 16", "244"),
+        Subcategory("جزء 17", "260"),
+        Subcategory("جزء 18", "276"),
+        Subcategory("جزء 19", "292"),
+        Subcategory("جزء 20", "308"),
+        Subcategory("جزء 21", "324"),
+        Subcategory("جزء 22", "340"),
+        Subcategory("جزء 23", "356"),
+        Subcategory("جزء 24", "372"),
+        Subcategory("جزء 25", "388"),
+        Subcategory("جزء 26", "404"),
+        Subcategory("جزء 27", "420"),
+        Subcategory("جزء 28", "436"),
+        Subcategory("جزء 29", "452"),
+        Subcategory("جزء 30", "468")
+    )),
+    Category("⭐ Souar et Ayat-fadila", listOf(
+        Subcategory("آية الكرسي", "490"),
+        Subcategory("سورة الفاتحة", "491"),
+        Subcategory("سورة الإخلاص", "492")
+    )),
+    Category("🤲 Douaa", listOf(
+        Subcategory("دعاء الصباح", "545"),
+        Subcategory("دعاء المساء", "546"),
+        Subcategory("دعاء قبل النوم", "547")
+    ))
+)
+
+Fichier: app/src/main\java\com\example\quran_athman_reader\DialogUtils.kt
+package com.example.quran_athman_reader
+
+import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.view.LayoutInflater
+import android.widget.LinearLayout
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+
+fun showCustomDialog(context: Context) {
+    // Inflate the custom layout
+    val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_menu, null)
+
+    // Create and configure the dialog
+    val dialog = AlertDialog.Builder(context)
+        .setView(dialogView)
+        .create()
+
+    // Find views and set click listeners
+    val menuDonate = dialogView.findViewById<LinearLayout>(R.id.menu_donate)
+    val menuTafsir = dialogView.findViewById<LinearLayout>(R.id.menu_tafsir)
+
+    menuDonate.setOnClickListener {
+        Toast.makeText(context, "للتواصل معنا", Toast.LENGTH_SHORT).show()
+        dialog.dismiss()
+    }
+
+    menuTafsir.setOnClickListener {
+        Toast.makeText(context, "التفسير", Toast.LENGTH_SHORT).show()
+        dialog.dismiss()
+    }
+
+    // Set transparent background for the dialog
+    dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    dialog.show()
+}
+
+Fichier: app/src/main\java\com\example\quran_athman_reader\ImageAdapter.kt
+package com.example.quran_athman_reader
+
+import android.app.Activity
+import android.content.Context
+import android.content.res.Configuration
+import android.graphics.BitmapFactory
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
+import java.io.IOException
+
+class ImageAdapter(
+    private val context: Context,
+    private val imagePaths: List<String>
+) : RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
+
+    var isNightMode: Boolean = false
+
+    inner class ImageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val imageView: ImageView = view.findViewById(R.id.imageView)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_image, parent, false)
+        return ImageViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
+        val imagePath = imagePaths[position]
+        try {
+            val inputStream = context.assets.open(imagePath)
+            val bitmap = BitmapFactory.decodeStream(inputStream)
+            holder.imageView.setImageBitmap(bitmap)
+            inputStream.close()
+
+            // Appliquer le mode nuit si activé
+            if (isNightMode) applyNightMode(holder.imageView)
+
+            // Ajuster les paramètres de mise en page en fonction de l'orientation
+            val isLandscape = context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+            if (isLandscape) {
+                holder.imageView.layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+                holder.imageView.layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
+            } else {
+                holder.imageView.layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT
+                holder.imageView.layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+            }
+            holder.imageView.adjustViewBounds = true
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
+    override fun getItemCount(): Int = imagePaths.size
+
+    private fun applyNightMode(imageView: ImageView) {
+        Log.e("DEBUG_NIGHT_MODE", "🌙 Night mode applied to image!")
+        val matrix = ColorMatrix().apply {
+            set(
+                floatArrayOf(
+                    -1f, 0f, 0f, 0f, 255f,
+                    0f, -1f, 0f, 0f, 255f,
+                    0f, 0f, -1f, 0f, 255f,
+                    0f, 0f, 0f, 1f, 0f
+                )
+            )
+        }
+        imageView.colorFilter = ColorMatrixColorFilter(matrix)
+    }
+}
+
+Fichier: app/src/main\java\com\example\quran_athman_reader\ImagePagerAdapter.kt
+package com.example.quran_athman_reader
+
+import android.content.Context
+import android.graphics.*
+import android.graphics.drawable.ColorDrawable
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+
+class ImagePagerAdapter(private val context: Context) :
+    RecyclerView.Adapter<ImagePagerAdapter.ImageViewHolder>() {
+
+    private val imageResources = listOf(
+        "quran/page1.jpg",
+        "quran/page2.jpg",
+        "quran/page3.jpg"
+    ) // Replace with your actual image paths
+
+    private val imageList = imageResources
+
+    var isNightMode = false // Track Night Mode state
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
+        val view = LayoutInflater.from(context).inflate(R.layout.page_layout, parent, false)
+        return ImageViewHolder(view)
+    }
+
+
+
+    override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
+        val imagePath = imageList[position]
+        Log.d("ImagePagerAdapter", "Loading image: $imagePath")
+
+
+        try {
+        Glide.with(context)
+            .load(imagePath)
+            //.override(Target.SIZE_ORIGINAL) // Load original size
+            .diskCacheStrategy(DiskCacheStrategy.ALL) // Cache images
+            .into(holder.imageView)
+
+        // Ensure no padding or margins
+        holder.imageView.setPadding(0, 0, 0, 0)
+        (holder.itemView.layoutParams as? ViewGroup.MarginLayoutParams)?.let {
+            it.setMargins(0, 0, 0, 0)
+            holder.itemView.layoutParams = it
+        }
+        } catch (e: Exception) {
+            e.printStackTrace()
+    }
+//*******************************
+
+
+        // Dynamically adjust image height based on screen width
+        val displayMetrics = context.resources.displayMetrics
+        val screenWidth = displayMetrics.widthPixels
+
+        // Get original image dimensions
+        val imageSize = getImageSize(imagePath)
+        val imageWidth = imageSize.x
+        val imageHeight = imageSize.y
+
+        // Calculate new height
+        val newHeight = (imageHeight * screenWidth / imageWidth)
+
+        // Set new height for ImageView
+        val params = holder.imageView.layoutParams as ConstraintLayout.LayoutParams
+        params.height = newHeight
+        holder.imageView.layoutParams = params
+
+        // Apply Night Mode if enabled
+        applyNightMode(holder.imageView)
+    }
+
+    override fun getItemCount(): Int = imageResources.size
+
+    class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val imageView: ImageView = itemView.findViewById(R.id.imageView)
+    }
+
+    private fun getImageSize(imagePath: String): Point {
+        val options = BitmapFactory.Options()
+        options.inJustDecodeBounds = true
+        try {
+            context.assets.open(imagePath).use { inputStream ->
+                BitmapFactory.decodeStream(inputStream, null, options)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return Point(options.outWidth, options.outHeight)
+    }
+
+    /**
+     * Applies Night Mode to the ImageView.
+     */
+    private fun applyNightMode(imageView: ImageView) {
+        if (isNightMode) {
+            val matrix = ColorMatrix().apply {
+                set(
+                    floatArrayOf(
+                        -1f, 0f, 0f, 0f, 255f,
+                        0f, -1f, 0f, 0f, 255f,
+                        0f, 0f, -1f, 0f, 255f,
+                        0f, 0f, 0f, 1f, 0f
+                    )
+                )
+            }
+            imageView.colorFilter = ColorMatrixColorFilter(matrix)
+        } else {
+            imageView.colorFilter = null
+        }
+    }
+
+    /**
+     * Toggles Night Mode and refreshes the adapter.
+     */
+    fun toggleNightMode(enabled: Boolean) {
+        isNightMode = enabled
+        notifyDataSetChanged() // Refresh all items to apply Night Mode
+    }
+}
+Fichier: app/src/main\java\com\example\quran_athman_reader\MainActivity.kt
+package com.example.quran_athman_reader
+
+import android.content.SharedPreferences
+import android.os.Bundle
+import android.util.Log
+import android.view.GestureDetector
+import android.view.MotionEvent
+import android.view.View
+import android.view.WindowManager
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.viewpager2.widget.ViewPager2
+
+class MainActivity : AppCompatActivity(), SettingsFragment.SettingsChangeListener {
+
+    private lateinit var viewPager: ViewPager2
+    private lateinit var menuLayout: LinearLayout
+    private lateinit var gestureDetector: GestureDetector
+    private lateinit var closeButton: ImageView
+    private lateinit var homeButton: ImageView
+    private lateinit var openChaptersButton: ImageView
+    private lateinit var savePageButton: ImageView
+    private lateinit var shareAppButton: ImageView
+    private lateinit var openBookmarkButton: ImageView
+    private lateinit var openSettingsButton: ImageView
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var adapter: ImagePagerAdapter
+
+
+
+    private val savedPages = mutableListOf<Int>()
+    private val totalPages = 486
+    private val imageList = (1..totalPages).map { "quran/page$it.jpg" }
+    private var isNightMode = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+
+
+        Log.e("DEBUG_APP_Night", "🌙 Restoring Night Mode = $isNightMode")
+
+        // ✅ Apply night mode before rendering UI
+        AppCompatDelegate.setDefaultNightMode(
+            if (isNightMode) AppCompatDelegate.MODE_NIGHT_YES
+            else AppCompatDelegate.MODE_NIGHT_NO
+        )
+        super.onCreate(savedInstanceState)
+
+        try {
+            setContentView(R.layout.activity_main)
+            Log.e("DEBUG_APP", "✅ MainActivity - onCreate() exécuté !")
+        } catch (e: Exception) {
+            Log.e("DEBUG_APP", "❌ ERREUR dans onCreate(): ${e.message}")
+        }
+
+        // 🔥 Initialize viewPager before using it
+        viewPager = findViewById(R.id.viewPager)
+
+        Log.e("DEBUG_APP", "✅ viewPager initialized!")
+
+
+        viewPager.setOnTouchListener { _, event ->
+            Log.d("DEBUG_MENU", "🔥 Touch detected: action = ${event.action}")
+            gestureDetector.onTouchEvent(event)
+        }
+
+
+        // Fullscreen and immersive mode
+        window.decorView.systemUiVisibility = (
+                View.SYSTEM_UI_FLAG_FULLSCREEN or
+                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
+                        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                )
+
+        // Initialize SharedPreferences
+        sharedPreferences = getSharedPreferences("AppSettings", MODE_PRIVATE)
+        val isNightMode = sharedPreferences.getBoolean("NightMode", false)
+
+        // Load Keep Screen On Setting
+        val isKeepScreenOn = sharedPreferences.getBoolean("KeepScreenOn", true)
+        if (isKeepScreenOn) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+
+        // Initialize Views
+        viewPager = findViewById(R.id.viewPager)
+        menuLayout = findViewById(R.id.menuLayout)
+        closeButton = findViewById(R.id.closeButton)
+        homeButton = findViewById(R.id.homeButton)
+        openChaptersButton = findViewById(R.id.openChapters)
+        savePageButton = findViewById(R.id.savePage)
+        shareAppButton = findViewById(R.id.shareApp)
+        openBookmarkButton = findViewById(R.id.openBookmark)
+        openSettingsButton = findViewById(R.id.openSettings)
+
+        // Rendre les vues invisibles au démarrage
+        closeButton.visibility = View.GONE
+        menuLayout.visibility = View.GONE
+        homeButton.visibility = View.GONE
+
+
+
+        // Load Scroll Settings
+        val isHorizontal = sharedPreferences.getBoolean("ScrollOrientation", true)
+
+        loadSavedPages()
+
+        // Initialize Adapter
+
+        adapter = ImagePagerAdapter(this);
+        adapter.isNightMode = isNightMode
+
+        // Configure ViewPager2 based on scroll settings
+        configureViewPagerOrientation(isHorizontal)
+
+        // Assign Adapter to ViewPager2
+        viewPager.adapter = adapter
+        viewPager.offscreenPageLimit = 3
+
+        // Important Menu Actions
+        closeButton.setOnClickListener { finish() }
+        homeButton.setOnClickListener {
+            showCustomDialog(this)
+        }
+
+        openSettingsButton.setOnClickListener { SettingsFragment().show(supportFragmentManager, "SettingsFragment") }
+        savePageButton.setOnClickListener { saveCurrentPage() }
+        openBookmarkButton.setOnClickListener { showSavedPagesDialog() }
+        openChaptersButton.setOnClickListener {
+            val chaptersFragment = ChaptersFragment()
+            chaptersFragment.setOnPageSelectedListener { page ->
+                navigateToPage(page)
+            }
+            chaptersFragment.show(supportFragmentManager, "chaptersFragment")
+        }
+
+        shareAppButton.setOnClickListener { ButtonActions.shareApp(it) }
+
+        // Gestion des gestes
+        gestureDetector = GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
+            override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+                Log.e("DEBUG_MENU", "🚀 Tap detected! Calling toggleVisibility()")
+               // Toast.makeText(this@MainActivity, "✅ Tap detected!", Toast.LENGTH_SHORT).show()
+                toggleVisibility()
+                return true
+            }
+        })
+
+
+
+
+        // Ajouter un écouteur de toucher sur le ViewPager
+        viewPager.setOnTouchListener { _, event -> Log.d("DEBUG_MENU", "Touch détecté: action = ${event.action}")
+            gestureDetector.onTouchEvent(event) }
+
+        window.decorView.setOnSystemUiVisibilityChangeListener { visibility ->
+            if ((visibility and View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
+                // Le mode plein écran a été désactivé
+                closeButton.visibility = View.VISIBLE
+                homeButton.visibility = View.VISIBLE
+            }
+        }
+
+
+
+    } // OnCreate END
+
+    /**
+     * Retrieves the current page number.
+     */
+    private fun getCurrentPage(): Int {
+        return viewPager.currentItem
+    }
+
+    private fun navigateToPage(page: String) {
+        val pageNumber = page.toIntOrNull() ?: return
+        if (pageNumber in 1..totalPages) {
+            viewPager.currentItem = pageNumber - 1
+        } else {
+            Toast.makeText(this, "Invalid page number", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun saveCurrentPage() {
+        val currentPage = getCurrentPage()
+        if (!savedPages.contains(currentPage)) {
+            savedPages.add(currentPage)
+            savePages()
+            Toast.makeText(this, "Page ${currentPage + 1} enregistrée", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "Page déjà enregistrée", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun showSavedPagesDialog() {
+        if (savedPages.isEmpty()) {
+            Toast.makeText(this, "Aucune page enregistrée", Toast.LENGTH_SHORT).show()
+            return
+        }
+        SavedPagesDialog(savedPages.toMutableList(), ::removeSavedPage) { page ->
+            viewPager.currentItem = page
+        }.show(supportFragmentManager, "SavedPagesDialog")
+    }
+
+    private fun removeSavedPage(page: Int) {
+        savedPages.remove(page)
+        savePages()
+    }
+
+    private fun savePages() {
+        sharedPreferences.edit().putString("savedPages", savedPages.joinToString(",")).apply()
+    }
+
+    private fun loadSavedPages() {
+        sharedPreferences.getString("savedPages", "")?.let {
+            savedPages.clear()
+            savedPages.addAll(it.split(",").mapNotNull { it.toIntOrNull() })
+        }
+    }
+
+    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+        Log.e("DEBUG_MENU", "📱 Touch event detected: action=${event.action}")
+
+        // Send the event to the gesture detector
+        gestureDetector.onTouchEvent(event)
+
+        // Pass event to the default system handler
+        return super.dispatchTouchEvent(event)
+    }
+
+
+    private fun toggleVisibility() {
+        Log.e("DEBUG_MENU", "🔥 toggleVisibility() called!")
+
+        val isCurrentlyVisible = menuLayout.visibility == View.VISIBLE
+        Log.e("DEBUG_MENU", "Before toggle: menuLayout=${menuLayout.visibility}")
+
+        closeButton.visibility = if (isCurrentlyVisible) View.GONE else View.VISIBLE
+        homeButton.visibility = if (isCurrentlyVisible) View.GONE else View.VISIBLE
+        menuLayout.visibility = if (isCurrentlyVisible) View.GONE else View.VISIBLE
+
+        Log.e("DEBUG_MENU", "After toggle: menuLayout=${menuLayout.visibility}")
+    }
+
+
+
+
+
+    private fun configureViewPagerOrientation(isHorizontal: Boolean) {
+        viewPager.orientation = if (isHorizontal)
+            ViewPager2.ORIENTATION_HORIZONTAL
+        else
+            ViewPager2.ORIENTATION_VERTICAL
+
+        // Handle RTL/LTR layout direction
+        val isRightToLeft = sharedPreferences.getBoolean("ScrollDirection", true)
+        if (isRightToLeft) {
+            viewPager.layoutDirection = View.LAYOUT_DIRECTION_RTL
+        } else {
+            viewPager.layoutDirection = View.LAYOUT_DIRECTION_LTR
+        }
+    }
+
+    override fun onNightModeChanged(isEnabled: Boolean) {
+        isNightMode = isEnabled
+        adapter.isNightMode = isNightMode
+        adapter.notifyDataSetChanged()
+        sharedPreferences.edit().putBoolean("NightMode", isNightMode).apply()
+    }
+
+    override fun onScrollDirectionChanged(isRightToLeft: Boolean) {
+        configureViewPagerOrientation(sharedPreferences.getBoolean("ScrollOrientation", true))
+    }
+
+    override fun onScrollOrientationChanged(isHorizontal: Boolean) {
+        configureViewPagerOrientation(isHorizontal)
+    }
+
+    override fun onFullscreenModeChanged(isEnabled: Boolean) {
+        if (isEnabled) {
+            window.decorView.systemUiVisibility = (
+                    View.SYSTEM_UI_FLAG_FULLSCREEN or
+                            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
+                            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    )
+        } else {
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
+        }
+    }
+
+    override fun onKeepScreenOnChanged(isEnabled: Boolean) {
+        if (isEnabled) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+    }
+}
+
+Fichier: app/src/main\java\com\example\quran_athman_reader\SavedPagesAdapter.kt
+package com.example.quran_athman_reader
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+
+class SavedPagesAdapter(
+    private val savedPages: MutableList<Int>,
+    private val onPageSelected: (Int) -> Unit,
+    private val onRemovePage: (Int) -> Unit
+) : RecyclerView.Adapter<SavedPagesAdapter.SavedPageViewHolder>() {
+
+    class SavedPageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val pageText: TextView = view.findViewById(R.id.pageNumber)
+        val removeButton: Button = view.findViewById(R.id.removePageButton)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SavedPageViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_saved_page, parent, false)
+        return SavedPageViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: SavedPageViewHolder, position: Int) {
+        val page = savedPages[position]
+
+        holder.pageText.text = "Page $page"
+        holder.pageText.setOnClickListener {
+            onPageSelected(page)
+        }
+
+        holder.removeButton.setOnClickListener {
+            onRemovePage(page)
+            savedPages.removeAt(position)
+            notifyItemRemoved(position)
+            notifyItemRangeChanged(position, savedPages.size)
+        }
+    }
+
+    override fun getItemCount(): Int = savedPages.size
+}
+
+Fichier: app/src/main\java\com\example\quran_athman_reader\SavedPagesDialog.kt
+package com.example.quran_athman_reader
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.Toast
+import androidx.fragment.app.DialogFragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+
+class SavedPagesDialog(
+    private val savedPages: MutableList<Int>,
+    private val onRemovePage: (Int) -> Unit,
+    private val onPageSelected: (Int) -> Unit
+) : DialogFragment() {
+
+    private lateinit var adapter: SavedPagesAdapter
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.dialog_saved_pages, container, false)
+        val recyclerView: RecyclerView = view.findViewById(R.id.recyclerViewPages)
+        val closeButton: Button = view.findViewById(R.id.closeButton)
+
+        // Initialize Adapter
+        adapter = SavedPagesAdapter(savedPages, onPageSelected, onRemovePage)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = adapter
+
+        if (savedPages.isEmpty()) {
+            Toast.makeText(requireContext(), "Aucune page enregistrée", Toast.LENGTH_SHORT).show()
+            dismiss()
+        }
+
+        closeButton.setOnClickListener { dismiss() }
+        return view
+    }
+}
+
+Fichier: app/src/main\java\com\example\quran_athman_reader\SettingsFragment.kt
+package com.example.quran_athman_reader
+
+import android.content.Context
+import android.content.SharedPreferences
+import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.Switch
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.fragment.app.DialogFragment
+
+class SettingsFragment : DialogFragment() {
+
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var nightModeSwitch: Switch
+    private lateinit var scrollDirectionSwitch: Switch
+    private lateinit var scrollOrientationSwitch: Switch
+    private lateinit var fullscreenSwitch: Switch
+    private lateinit var keepScreenOnSwitch: Switch // Added for Keep Screen On
+    private lateinit var resetButton: Button
+    private var listener: SettingsChangeListener? = null
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_settings, container, false)
+
+        // Initialize SharedPreferences
+        sharedPreferences = requireActivity().getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
+
+        // Initialize Views
+        nightModeSwitch = view.findViewById(R.id.nightModeSwitch)
+        scrollDirectionSwitch = view.findViewById(R.id.scrollDirectionSwitch)
+        scrollOrientationSwitch = view.findViewById(R.id.scrollOrientationSwitch)
+        fullscreenSwitch = view.findViewById(R.id.fullscreenSwitch)
+        keepScreenOnSwitch = view.findViewById(R.id.keepScreenOnSwitch) // Initialize Keep Screen On switch
+        val closeButton: Button = view.findViewById(R.id.closeButton)
+        resetButton = view.findViewById(R.id.resetButton)
+
+        // Load Saved Preferences
+        val isNightMode = sharedPreferences.getBoolean("NightMode", false)
+        val isRightToLeft = sharedPreferences.getBoolean("ScrollDirection", true) // Default: Right-to-Left
+        val isHorizontal = sharedPreferences.getBoolean("ScrollOrientation", true) // Default: Horizontal
+        val isFullscreen = sharedPreferences.getBoolean("FullscreenMode", false) // Default: Not fullscreen
+        val isKeepScreenOn = sharedPreferences.getBoolean("KeepScreenOn", true) // Default: Enabled
+
+        // Set Initial States
+        nightModeSwitch.isChecked = isNightMode
+        scrollDirectionSwitch.isChecked = isRightToLeft
+        scrollOrientationSwitch.isChecked = isHorizontal
+        fullscreenSwitch.isChecked = isFullscreen
+        keepScreenOnSwitch.isChecked = isKeepScreenOn // Set initial state for Keep Screen On switch
+
+        // Night Mode Listener
+        nightModeSwitch.setOnCheckedChangeListener { _, isChecked ->
+            setNightMode(isChecked)
+            sharedPreferences.edit().putBoolean("NightMode", isChecked).apply()
+            listener?.onNightModeChanged(isChecked)
+        }
+
+        // Scroll Direction Listener
+        scrollDirectionSwitch.setOnCheckedChangeListener { _, isChecked ->
+            sharedPreferences.edit().putBoolean("ScrollDirection", isChecked).apply()
+            listener?.onScrollDirectionChanged(isChecked)
+        }
+
+        // Scroll Orientation Listener
+        scrollOrientationSwitch.setOnCheckedChangeListener { _, isChecked ->
+            sharedPreferences.edit().putBoolean("ScrollOrientation", isChecked).apply()
+            listener?.onScrollOrientationChanged(isChecked)
+        }
+
+        // Fullscreen Mode Listener
+        fullscreenSwitch.setOnCheckedChangeListener { _, isChecked ->
+            sharedPreferences.edit().putBoolean("FullscreenMode", isChecked).apply()
+            listener?.onFullscreenModeChanged(isChecked)
+        }
+
+        // Keep Screen On Listener
+        keepScreenOnSwitch.setOnCheckedChangeListener { _, isChecked ->
+            sharedPreferences.edit().putBoolean("KeepScreenOn", isChecked).apply()
+            listener?.onKeepScreenOnChanged(isChecked)
+        }
+
+        // Close Button
+        closeButton.setOnClickListener { dismiss() }
+
+        // Reset Button
+        resetButton.setOnClickListener {
+            resetSettings()
+        }
+
+        return view
+    }
+
+    private fun setNightMode(enabled: Boolean) {
+        val sharedPreferences = requireActivity().getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
+        val currentMode = sharedPreferences.getBoolean("NightMode", false)
+
+        Log.e("DEBUG_APP_Night", "🔄 Changing Night Mode: Current=$currentMode, New=$enabled")
+
+        // ✅ Prevent reapplying the same mode
+        if (enabled == currentMode) {
+            Log.e("DEBUG_APP_Night", "⚠️ Night mode is already set. No change needed.")
+            return  // 🚀 STOP HERE! No restart needed.
+        }
+
+        // ✅ Save the new mode BEFORE changing UI
+        sharedPreferences.edit().putBoolean("NightMode", enabled).apply()
+
+        // ✅ Apply mode correctly
+        AppCompatDelegate.setDefaultNightMode(
+            if (enabled) AppCompatDelegate.MODE_NIGHT_YES
+            else AppCompatDelegate.MODE_NIGHT_NO
+        )
+
+        Log.e("DEBUG_APP_Night", "✅ Night mode changed! Restarting activity...")
+
+        // ✅ Restart activity but prevent double toggling
+        requireActivity().finish()
+        requireActivity().overridePendingTransition(0, 0) // 🔥 Prevent flickering
+        requireActivity().startActivity(requireActivity().intent)
+    }
+
+
+
+
+
+    private fun resetSettings() {
+        sharedPreferences.edit()
+            .putBoolean("NightMode", false) // Reset Night Mode
+            .putBoolean("ScrollDirection", true) // Reset to Right-to-Left
+            .putBoolean("ScrollOrientation", true) // Reset to Horizontal
+            .putBoolean("FullscreenMode", false) // Reset Fullscreen Mode
+            .putBoolean("KeepScreenOn", true) // Reset Keep Screen On
+            .apply()
+
+        // Update UI
+        nightModeSwitch.isChecked = false
+        scrollDirectionSwitch.isChecked = true
+        scrollOrientationSwitch.isChecked = true
+        fullscreenSwitch.isChecked = false
+        keepScreenOnSwitch.isChecked = true // Reset Keep Screen On switch
+
+        // Notify listeners
+        setNightMode(false)
+        listener?.onNightModeChanged(false)
+        listener?.onScrollDirectionChanged(true)
+        listener?.onScrollOrientationChanged(true)
+        listener?.onFullscreenModeChanged(false)
+        listener?.onKeepScreenOnChanged(true) // Notify Keep Screen On change
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is SettingsChangeListener) {
+            listener = context
+        }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        listener = null
+    }
+
+    interface SettingsChangeListener {
+        fun onNightModeChanged(isEnabled: Boolean)
+        fun onScrollDirectionChanged(isRightToLeft: Boolean)
+        fun onScrollOrientationChanged(isHorizontal: Boolean)
+        fun onFullscreenModeChanged(isFullscreen: Boolean)
+        fun onKeepScreenOnChanged(isEnabled: Boolean) // Added for Keep Screen On
+    }
+}
+
+Fichier: app/src/main\java\com\example\quran_athman_reader\Subcategory_Adapter.kt
+package com.example.quran_athman_reader
+
+
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+// ✅ Import de la classe Subcategory depuis Data.kt
+import com.example.quran_athman_reader.Subcategory
+
+class SubcategoryAdapter(
+    private val subcategories: List<Subcategory>,  // ✅ Assurez-vous que c'est bien List<Subcategory>
+    private val onItemSelected: (Subcategory) -> Unit  // ✅ Accepte un Subcategory complet
+) : RecyclerView.Adapter<SubcategoryAdapter.SubcategoryViewHolder>() {
+
+    inner class SubcategoryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val subcategoryText: TextView = view.findViewById(R.id.subcategoryText)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubcategoryViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_subcategory, parent, false)
+        return SubcategoryViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: SubcategoryViewHolder, position: Int) {
+        val subcategory = subcategories[position]
+        holder.subcategoryText.text = subcategory.name
+        holder.subcategoryText.setOnClickListener {
+            onItemSelected(subcategory)  // ✅ Passe un objet Subcategory
+        }
+    }
+
+    override fun getItemCount(): Int = subcategories.size
+}
+
+Fichier: app/src/main\java\com\example\quran_athman_reader\ZoomableImageView.kt
+package com.example.quran_athman_reader
+
+import android.content.Context
+import android.graphics.Matrix
+import android.graphics.PointF
+import android.graphics.drawable.Drawable
+import android.util.AttributeSet
+import android.view.MotionEvent
+import android.view.ScaleGestureDetector
+import androidx.appcompat.widget.AppCompatImageView
+import kotlin.math.max
+import kotlin.math.min
+
+class ZoomableImageView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null
+) : AppCompatImageView(context, attrs) {
+
+    private val scaleDetector: ScaleGestureDetector
+    private val matrix = Matrix()
+    private var scaleFactor = 1f
+    private var mode = NONE
+
+    private var lastTouchX = 0f
+    private var lastTouchY = 0f
+    private var activePointerId = -1
+
+    private var isPortraitMode = true
+
+    companion object {
+        private const val NONE = 0
+        private const val DRAG = 1
+        private const val ZOOM = 2
+    }
+
+    init {
+        scaleType = ScaleType.MATRIX
+        scaleDetector = ScaleGestureDetector(context, ScaleListener())
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        scaleDetector.onTouchEvent(event)
+
+        when (event.action and MotionEvent.ACTION_MASK) {
+            MotionEvent.ACTION_DOWN -> {
+                mode = DRAG
+                lastTouchX = event.x
+                lastTouchY = event.y
+            }
+            MotionEvent.ACTION_POINTER_DOWN -> {
+                mode = ZOOM
+            }
+            MotionEvent.ACTION_MOVE -> {
+                if (mode == DRAG) {
+                    val dx = event.x - lastTouchX
+                    val dy = event.y - lastTouchY
+                    matrix.postTranslate(dx, dy)
+                    lastTouchX = event.x
+                    lastTouchY = event.y
+                    setImageMatrix(matrix)
+                }
+            }
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_POINTER_UP -> {
+                mode = NONE
+            }
+        }
+        return true
+    }
+
+    private inner class ScaleListener : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+        override fun onScale(detector: ScaleGestureDetector): Boolean {
+            scaleFactor *= detector.scaleFactor
+            scaleFactor = max(1f, min(scaleFactor, 3f)) // Limit zoom between 1x and 3x
+
+            // Restrict scaling based on orientation
+            if (isPortraitMode) {
+                scaleFactor = min(scaleFactor, height.toFloat() / drawable.intrinsicHeight)
+            } else {
+                scaleFactor = min(scaleFactor, width.toFloat() / drawable.intrinsicWidth)
+            }
+
+            matrix.setScale(scaleFactor, scaleFactor, detector.focusX, detector.focusY)
+            setImageMatrix(matrix)
+            return true
+        }
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        isPortraitMode = w < h // Determine orientation based on width and height
+    }
+
+    override fun setImageDrawable(drawable: Drawable?) {
+        super.setImageDrawable(drawable)
+        resetZoom()
+    }
+
+    private fun resetZoom() {
+        matrix.reset()
+        scaleFactor = 1f
+        setImageMatrix(matrix)
+    }
+}
+
+Fichier: app/src/main\res\drawable\close_button_background.xml
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+
+    <solid android:color="@android:color/transparent"/>
+    <stroke
+        android:width="2dp"
+        android:color="@android:color/darker_gray"/>
+    <size
+        android:width="50dp"
+        android:height="50dp"/>
+    <corners android:radius="25dp"/>
+</shape>
+
+Fichier: app/src/main\res\drawable\dialog_background.xml
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#99000000"/> <!-- Semi-transparent black -->
+    <corners android:radius="16dp"/>
+</shape>
+
+Fichier: app/src/main\res\drawable\error_image.xml
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#FF0000" />
+    <corners android:radius="8dp" />
+</shape>
+
+Fichier: app/src/main\res\drawable\ic_home1.xml
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#808080"
+        android:pathData="M13,3L6,10h2v8h4v-5h2v5h4v-8h2L13,3z"/>
+</vector>
+
+Fichier: app/src/main\res\drawable\ic_launcher_background.xml
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#3DDC84"
+        android:pathData="M0,0h108v108h-108z" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M9,0L9,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M19,0L19,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M29,0L29,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M39,0L39,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M49,0L49,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M59,0L59,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M69,0L69,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M79,0L79,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M89,0L89,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M99,0L99,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,9L108,9"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,19L108,19"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,29L108,29"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,39L108,39"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,49L108,49"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,59L108,59"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,69L108,69"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,79L108,79"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,89L108,89"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,99L108,99"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M19,29L89,29"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M19,39L89,39"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M19,49L89,49"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M19,59L89,59"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M19,69L89,69"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M19,79L89,79"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M29,19L29,89"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M39,19L39,89"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M49,19L49,89"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M59,19L59,89"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M69,19L69,89"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M79,19L79,89"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+</vector>
+
+Fichier: app/src/main\res\drawable\ic_launcher_foreground.xml
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path android:pathData="M31,63.928c0,0 6.4,-11 12.1,-13.1c7.2,-2.6 26,-1.4 26,-1.4l38.1,38.1L107,108.928l-32,-1L31,63.928z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:endX="85.84757"
+                android:endY="92.4963"
+                android:startX="42.9492"
+                android:startY="49.59793"
+                android:type="linear">
+                <item
+                    android:color="#44000000"
+                    android:offset="0.0" />
+                <item
+                    android:color="#00000000"
+                    android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillType="nonZero"
+        android:pathData="M65.3,45.828l3.8,-6.6c0.2,-0.4 0.1,-0.9 -0.3,-1.1c-0.4,-0.2 -0.9,-0.1 -1.1,0.3l-3.9,6.7c-6.3,-2.8 -13.4,-2.8 -19.7,0l-3.9,-6.7c-0.2,-0.4 -0.7,-0.5 -1.1,-0.3C38.8,38.328 38.7,38.828 38.9,39.228l3.8,6.6C36.2,49.428 31.7,56.028 31,63.928h46C76.3,56.028 71.8,49.428 65.3,45.828zM43.4,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2c-0.3,-0.7 -0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C45.3,56.528 44.5,57.328 43.4,57.328L43.4,57.328zM64.6,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2s-0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C66.5,56.528 65.6,57.328 64.6,57.328L64.6,57.328z"
+        android:strokeWidth="1"
+        android:strokeColor="#00000000" />
+</vector>
+
+Fichier: app/src/main\res\drawable\menu_background.xml
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners android:radius="20dp"/>
+    <solid android:color="#CC000000"/> <!-- Semi-transparent background -->
+    <padding android:left="16dp" android:top="8dp" android:right="16dp" android:bottom="8dp"/>
+</shape>
+
+Fichier: app/src/main\res\drawable\placeholder.xml
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#CCCCCC" />
+    <corners android:radius="8dp" />
+</shape>
+
+Fichier: app/src/main\res\drawable\transparent_black_background.xml
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#80000000" /> <!-- Semi-transparent black -->
+    <corners android:radius="16dp" />   <!-- Rounded corners -->
+    <stroke android:width="1dp" android:color="#40FFFFFF" /> <!-- Optional: Light border -->
+</shape>
+
+Fichier: app/src/main\res\layout\activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black"> <!-- Black background -->
+
+    <!-- ViewPager2 pour afficher les pages -->
+    <ImageView
+        android:id="@+id/closeButton"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/close_button_background"
+        android:contentDescription="Fermer l'application"
+        android:padding="8dp"
+        android:src="@drawable/ic_close"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Bouton Close (en haut à droite) -->
+    <ImageView
+        android:id="@+id/homeButton"
+        android:layout_width="37dp"
+        android:layout_height="37dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/close_button_background"
+        android:contentDescription="Home Button"
+        android:padding="8dp"
+        android:src="@drawable/ic_home"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Bouton Home (en haut à gauche) -->
+    <LinearLayout
+        android:id="@+id/menuLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/menu_background"
+        android:elevation="8dp"
+        android:orientation="horizontal"
+        android:padding="0dp"
+        android:visibility="gone"
+        android:weightSum="6"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!-- Open Chapters Button -->
+        <ImageView
+            android:id="@+id/openChapters"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:contentDescription="Ouvrir les chapitres"
+            android:padding="8dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_chapters" />
+
+        <!-- Save Page Button -->
+        <ImageView
+            android:id="@+id/savePage"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:contentDescription="Enregistrer la page"
+            android:padding="8dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_save" />
+
+        <!-- Share App Button -->
+        <ImageView
+            android:id="@+id/shareApp"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:contentDescription="Partager l'application"
+            android:padding="8dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_share" />
+
+        <!-- Open Bookmark Button -->
+        <ImageView
+            android:id="@+id/openBookmark"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:contentDescription="Ouvrir les marque-pages"
+            android:padding="8dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_bookmark" />
+
+        <!-- Open Settings Button -->
+        <ImageView
+            android:id="@+id/openSettings"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:contentDescription="Ouvrir les paramètres"
+            android:padding="8dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_settings" />
+    </LinearLayout>
+
+    <!-- Menu Layout (en bas de l'écran) -->
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/menuLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+Fichier: app/src/main\res\layout\dialog_menu.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_background"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:layoutDirection="rtl"
+    android:textDirection="rtl">
+
+    <!-- Each menu item -->
+    <LinearLayout
+        android:id="@+id/menu_donate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="?android:attr/selectableItemBackground"
+        android:gravity="start|center_vertical"
+        android:paddingVertical="12dp"
+        android:paddingHorizontal="16dp">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_zoom"
+            android:color="@android:color/white"
+            android:layout_marginStart="8dp"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="للتواصل معنا"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:gravity="start"
+            android:textAlignment="viewStart"
+            android:layout_marginStart="10dp"/>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" />
+
+    <!-- Repeat for each menu item -->
+    <LinearLayout
+        android:id="@+id/menu_tafsir"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="?android:attr/selectableItemBackground"
+        android:gravity="start|center_vertical"
+        android:paddingVertical="12dp"
+        android:paddingHorizontal="16dp">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/recherche"
+            app:tint="@android:color/white"
+            android:layout_marginStart="8dp"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:text="التفسير"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:gravity="start"
+            android:textAlignment="viewStart"
+            android:layout_marginStart="10dp"/>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+    <!-- Repeat for other items... -->
+
+</LinearLayout>
+
+Fichier: app/src/main\res\layout\dialog_saved_pages.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="6dp"
+    android:background="@android:color/white">
+
+    <!-- Titre -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="📖 Saved Pages"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingBottom="10dp"
+        android:textColor="@android:color/black" />
+
+    <!-- Ligne de séparation -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginBottom="8dp"/>
+    <Button
+        android:id="@+id/closeButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="❌ Close"
+        android:backgroundTint="@android:color/holo_green_dark"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Liste des pages enregistrées avec RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewPages"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:nestedScrollingEnabled="false"
+        android:overScrollMode="never"/>
+
+    <!-- Bouton Fermer -->
+
+</LinearLayout>
+
+Fichier: app/src/main\res\layout\fragment_bookmark.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    android:padding="16dp">
+
+    <Button
+        android:id="@+id/closeButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="❌ Fermer"/>
+</LinearLayout>
+
+Fichier: app/src/main\res\layout\fragment_chapters.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    android:padding="16dp">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="⚙ Index"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingBottom="3dp"
+        android:textColor="@android:color/black" />
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginBottom="3dp"/>
+    <!-- Close Button -->
+    <Button
+        android:id="@+id/closeButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="❌ Fermer"
+        android:backgroundTint="@android:color/holo_green_dark"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="8dp"/>
+
+    <!-- RecyclerView for Categories -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chapterRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:nestedScrollingEnabled="false"
+        android:overScrollMode="never"/>
+
+
+</LinearLayout>
+
+Fichier: app/src/main\res\layout\fragment_settings.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/transparent"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="⚙ Settings"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingBottom="8dp"
+        android:textColor="@android:color/black" />
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginBottom="8dp"/>
+    <Button
+        android:id="@+id/closeButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@android:color/holo_green_dark"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="8dp"
+        android:text="❌ Close"/>
+
+    <Button
+        android:id="@+id/resetButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@android:color/holo_green_dark"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="8dp"
+        android:text="Reset" />
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginBottom="8dp"/>
+
+    <Switch
+        android:id="@+id/nightModeSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Night Mode"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:checked="false"/>
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- Scroll Direction Switch -->
+    <Switch
+        android:id="@+id/scrollDirectionSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Scroll Right-to-Left"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:checked="true"/> <!-- Default: Right-to-Left -->
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- Scroll Orientation Switch -->
+    <Switch
+        android:id="@+id/scrollOrientationSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Horizontal Scrolling"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:checked="true"/> <!-- Default: Horizontal -->
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginBottom="8dp"/>
+
+    <Switch
+        android:id="@+id/fullscreenSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fullscreen Mode"
+        android:checked="false" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginBottom="8dp"/>
+    <Switch
+        android:id="@+id/keepScreenOnSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Keep Screen On"
+        android:checked="true" />
+
+
+
+</LinearLayout>
+
+Fichier: app/src/main\res\layout\item_category.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:background="@android:color/white">
+
+    <TextView
+        android:id="@+id/categoryTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:padding="8dp"
+        android:textColor="@android:color/black"/>
+
+    <!-- RecyclerView for Subcategories -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewSubcategories"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:nestedScrollingEnabled="false"
+        android:overScrollMode="never"/>
+</LinearLayout>
+
+Fichier: app/src/main\res\layout\item_image.xml
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:adjustViewBounds="false" />
+</FrameLayout>
+
+
+Fichier: app/src/main\res\layout\item_saved_page.xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="6dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp"
+    android:background="@android:color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:gravity="center_vertical"
+        android:background="@android:color/white">
+
+        <!-- Page Number -->
+        <TextView
+            android:id="@+id/pageNumber"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="📖 Page Number"
+            android:textSize="16sp"
+            android:textColor="@android:color/black"
+            android:clickable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:padding="8dp" />
+
+        <!-- Remove Button -->
+        <Button
+            android:id="@+id/removePageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="❌"
+            android:backgroundTint="@android:color/holo_green_dark"
+            android:textColor="@android:color/white"
+            android:elevation="4dp"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
+
+Fichier: app/src/main\res\layout\item_subcategory.xml
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/subcategoryText"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textSize="16sp"
+    android:padding="10dp"
+    android:textColor="@android:color/black"
+    android:gravity="center"
+    android:background="?android:attr/selectableItemBackground"/>
+
+Fichier: app/src/main\res\layout\page_layout.xml
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- ConstraintLayout to maintain image aspect ratio -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- ImageView with dynamic height -->
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            app:layout_constraintDimensionRatio="H,16:9"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintWidth_default="spread" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
+Fichier: app/src/main\res\layout-land\activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black"> <!-- Black background -->
+
+    <!-- ViewPager2 for displaying images -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" />
+
+    <!-- Bouton Close (en haut à droite) -->
+    <ImageView
+        android:id="@+id/closeButton"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_gravity="end|top"
+        android:src="@drawable/ic_close"
+        android:contentDescription="Fermer l'application"
+        android:padding="8dp"
+        android:background="@drawable/close_button_background"
+        android:visibility="gone" />
+
+    <!-- Bouton Home (en haut à gauche) -->
+    <ImageView
+        android:id="@+id/homeButton"
+        android:layout_width="37dp"
+        android:layout_height="37dp"
+        android:layout_gravity="start|top"
+        android:src="@drawable/ic_home"
+        android:contentDescription="Home Button"
+        android:padding="8dp"
+        android:background="@drawable/close_button_background"
+        android:visibility="gone" />
+
+    <!-- Menu Layout (en bas de l'écran) -->
+    <LinearLayout
+        android:id="@+id/menuLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:padding="8dp"
+        android:background="@drawable/menu_background"
+        android:elevation="8dp"
+        android:layout_gravity="bottom"
+        android:weightSum="6">
+
+        <!-- Open Chapters Button -->
+        <ImageView
+            android:id="@+id/openChapters"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_chapters"
+            android:contentDescription="Ouvrir les chapitres"
+            android:scaleType="centerInside"
+            android:padding="8dp"/>
+
+        <!-- Save Page Button -->
+        <ImageView
+            android:id="@+id/savePage"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_save"
+            android:contentDescription="Enregistrer la page"
+            android:scaleType="centerInside"
+            android:padding="8dp"/>
+
+        <!-- Share App Button -->
+        <ImageView
+            android:id="@+id/shareApp"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_share"
+            android:contentDescription="Partager l'application"
+            android:scaleType="centerInside"
+            android:padding="8dp"/>
+
+        <!-- Open Bookmark Button -->
+        <ImageView
+            android:id="@+id/openBookmark"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_bookmark"
+            android:contentDescription="Ouvrir les marque-pages"
+            android:scaleType="centerInside"
+            android:padding="8dp"/>
+
+        <!-- Open Settings Button -->
+        <ImageView
+            android:id="@+id/openSettings"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_settings"
+            android:contentDescription="Ouvrir les paramètres"
+            android:scaleType="centerInside"
+            android:padding="8dp"/>
+    </LinearLayout>
+</FrameLayout>
+
+Fichier: app/src/main\res\mipmap-anydpi-v26\ic_launcher.xml
+<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@drawable/ic_launcher_background" />
+    <foreground android:drawable="@drawable/ic_launcher_foreground" />
+    <monochrome android:drawable="@drawable/ic_launcher_foreground" />
+</adaptive-icon>
+
+Fichier: app/src/main\res\mipmap-anydpi-v26\ic_launcher_round.xml
+<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@drawable/ic_launcher_background" />
+    <foreground android:drawable="@drawable/ic_launcher_foreground" />
+    <monochrome android:drawable="@drawable/ic_launcher_foreground" />
+</adaptive-icon>
+
+Fichier: app/src/main\res\raw\chapters.json
+[
+  {"id": 1, "title": "Al-Fatiha"},
+  {"id": 2, "title": "Al-Baqara"},
+  {"id": 3, "title": "Aal-e-Imran"},
+  {"id": 4, "title": "An-Nisa"},
+  {"id": 5, "title": "Al-Ma'idah"}
+]
+
+Fichier: app/src/main\res\raw\title.json
+{ "1": "القرآن الكريم برواية ورش عن نافع ",
+  "2": "الفاتحة - حزب 1 - ثمن",
+  "3": "البقرة - حزب 1 - ثمن",
+  "4": "البقرة - حزب 1 - ثمن",
+  "5": "البقرة - حزب 1 - ربع",
+  "6": "البقرة - حزب 1 - 3/8",
+  "7": "البقرة - حزب 1 - نصف",
+  "8": "البقرة - حزب 1 - 5/8",
+  "9": "البقرة - حزب 1 - 3/4",
+  "10": "البقرة - حزب 1 - 7/8",
+  "11": "البقرة - حزب 1 -   ",
+  "12": "البقرة - حزب 2 - ثمن",
+  "13": "البقرة - حزب 2 - ربع",
+  "14": "البقرة - حزب 2 - 3/8",
+  "15": "البقرة - حزب 2 - نصف",
+  "16": "البقرة - حزب 2 - 5/8",
+  "17": "البقرة - حزب 2 - 3/4",
+  "18": "البقرة - حزب 2 - 7/8",
+  "19": "البقرة - حزب 2 -   ",
+  "20": "البقرة - حزب 3 - ثمن",
+  "21": "البقرة - حزب 3 - ربع",
+  "22": "البقرة - حزب 3 - 3/8",
+  "23": "البقرة - حزب 3 - نصف",
+  "24": "البقرة - حزب 3 - 5/8",
+  "25": "البقرة - حزب 3 - 3/4",
+  "26": "البقرة - حزب 3 - 7/8",
+  "27": "البقرة - حزب 3 -   ",
+  "28": "البقرة - حزب 4 - ثمن",
+  "29": "البقرة - حزب 4 - ربع",
+  "30": "البقرة - حزب 4 - 3/8",
+  "31": "البقرة - حزب 4 - نصف",
+  "32": "البقرة - حزب 4 - 5/8",
+  "33": "البقرة - حزب 4 - 3/4",
+  "34": "البقرة - حزب 4 - 7/8",
+  "35": "البقرة - حزب 4 -   ",
+  "36": "البقرة - حزب 5 - ثمن",
+  "37": "البقرة - حزب 5 - ربع",
+  "38": "البقرة - حزب 5 - 3/8",
+  "39": "البقرة - حزب 5 - نصف",
+  "40": "البقرة - حزب 5 - 5/8",
+  "41": "البقرة - حزب 5 - 3/4",
+  "42": "آل عمران - حزب 5 - 7/8",
+  "43": "آل عمران - حزب 5 -   ",
+  "44": "آل عمران - حزب 6 - ثمن",
+  "45": "آل عمران - حزب 6 - ربع",
+  "46": "آل عمران - حزب 6 - 3/8",
+  "47": "آل عمران - حزب 6 - نصف",
+  "48": "آل عمران - حزب 6 - 5/8",
+  "49": "آل عمران - حزب 6 - 3/4",
+  "50": "آل عمران - حزب 6 - 7/8",
+  "51": "آل عمران - حزب 6 -   ",
+  "52": "آل عمران - حزب 7 - ثمن",
+  "53": "آل عمران - حزب 7 - ربع",
+  "54": "آل عمران - حزب 7 - 3/8",
+  "55": "آل عمران - حزب 7 - نصف",
+  "56": "آل عمران - حزب 7 - 5/8",
+  "57": "آل عمران - حزب 7 - 3/4",
+  "58": "آل عمران - حزب 7 - 7/8",
+  "59": "آل عمران - حزب 7 -   ",
+  "60": "آل عمران - حزب 8 - ثمن",
+  "61": "آل عمران - حزب 8 - ربع",
+  "62": "آل عمران - حزب 8 - 3/8",
+  "63": "النساء - حزب 8 - نصف",
+  "64": "النساء - حزب 8 - 5/8",
+  "65": "النساء - حزب 8 - 3/4",
+  "66": "النساء - حزب 8 - 7/8",
+  "67": "النساء - حزب 8 -   ",
+  "68": "النساء - حزب 9 - ثمن",
+  "69": "النساء - حزب 9 - ربع",
+  "70": "النساء - حزب 9 - 3/8",
+  "71": "النساء - حزب 9 - نصف",
+  "72": "النساء - حزب 9 - 5/8",
+  "73": "النساء - حزب 9 - 3/4",
+  "74": "النساء - حزب 9 - 7/8",
+  "75": "النساء - حزب 9 -   ",
+  "76": "النساء - حزب 10 - ثمن",
+  "77": "النساء - حزب 10 - ربع",
+  "78": "النساء - حزب 10 - 3/8",
+  "79": "النساء - حزب 10 - نصف",
+  "80": "النساء - حزب 10 - 5/8",
+  "81": "النساء - حزب 10 - 3/4",
+  "82": "النساء - حزب 10 - 7/8",
+  "83": "النساء - حزب 10 -   ",
+  "84": "النساء - حزب 11 - ثمن",
+  "85": "النساء - حزب 11 - ربع",
+  "86": "النساء - حزب 11 - 3/8",
+  "87": "المائدة - حزب 11 - نصف",
+  "88": "المائدة - حزب 11 - 5/8",
+  "89": "المائدة - حزب 11 - 3/4",
+  "90": "المائدة - حزب 11 - 7/8",
+  "91": "المائدة - حزب 11 -   ",
+  "92": "المائدة - حزب 12 - ثمن",
+  "93": "المائدة - حزب 12 - ربع",
+  "94": "المائدة - حزب 12 - 3/8",
+  "95": "المائدة - حزب 12 - نصف",
+  "96": "المائدة - حزب 12 - 5/8",
+  "97": "المائدة - حزب 12 - 3/4",
+  "98": "المائدة - حزب 12 - 7/8",
+  "99": "المائدة - حزب 12 -   ",
+  "100": "المائدة - حزب 13 - ثمن",
+  "101": "المائدة - حزب 13 - ربع",
+  "102": "المائدة - حزب 13 - 3/8",
+  "103": "المائدة - حزب 13 - نصف",
+  "104": "المائدة - حزب 13 - 5/8",
+  "105": "الأنعام - حزب 13 - 3/4",
+  "106": "الأنعام - حزب 13 - 7/8",
+  "107": "الأنعام - حزب 13 -   ",
+  "108": "الأنعام - حزب 14 - ثمن",
+  "109": "الأنعام - حزب 14 - ربع",
+  "110": "الأنعام - حزب 14 - 3/8",
+  "111": "الأنعام - حزب 14 - نصف",
+  "112": "الأنعام - حزب 14 - 5/8",
+  "113": "الأنعام - حزب 14 - 3/4",
+  "114": "الأنعام - حزب 14 - 7/8",
+  "115": "الأنعام - حزب 14 -   ",
+  "116": "الأنعام - حزب 15 - ثمن",
+  "117": "الأنعام - حزب 15 - ربع",
+  "118": "الأنعام - حزب 15 - 3/8",
+  "119": "الأنعام - حزب 15 - نصف",
+  "120": "الأنعام - حزب 15 - 5/8",
+  "121": "الأنعام - حزب 15 - 3/4",
+  "122": "الأنعام - حزب 15 - 7/8",
+  "123": "الأعراف - حزب 15 -   ",
+  "124": "الأعراف - حزب 16 - ثمن",
+  "125": "الأعراف - حزب 16 - ربع",
+  "126": "الأعراف - حزب 16 - 3/8",
+  "127": "الأعراف - حزب 16 - نصف",
+  "128": "الأعراف - حزب 16 - 5/8",
+  "129": "الأعراف - حزب 16 - 3/4",
+  "130": "الأعراف - حزب 16 - 7/8",
+  "131": "الأعراف - حزب 16 -   ",
+  "132": "الأعراف - حزب 17 - ثمن",
+  "133": "الأعراف - حزب 17 - ربع",
+  "134": "الأعراف - حزب 17 - 3/8",
+  "135": "الأعراف - حزب 17 - نصف",
+  "136": "الأعراف - حزب 17 - 5/8",
+  "137": "الأعراف - حزب 17 - 3/4",
+  "138": "الأعراف - حزب 17 - 7/8",
+  "139": "الأعراف - حزب 17 -   ",
+  "140": "الأعراف - حزب 18 - ثمن",
+  "141": "الأعراف - حزب 18 - ربع",
+  "142": "الأعراف - حزب 18 - 3/8",
+  "143": "الأنفال - حزب 18 - نصف",
+  "144": "الأنفال - حزب 18 - 5/8",
+  "145": "الأنفال - حزب 18 - 3/4",
+  "146": "الأنفال - حزب 18 - 7/8",
+  "147": "الأنفال - حزب 18 -   ",
+  "148": "الأنفال - حزب 19 - ثمن",
+  "149": "الأنفال - حزب 19 - ربع",
+  "150": "الأنفال - حزب 19 - 3/8",
+  "151": "التوبة - حزب 19 - نصف",
+  "152": "التوبة - حزب 19 - 5/8",
+  "153": "التوبة - حزب 19 - 3/4",
+  "154": "التوبة - حزب 19 - 7/8",
+  "155": "التوبة - حزب 19 -   ",
+  "156": "التوبة - حزب 20 - ثمن",
+  "157": "التوبة - حزب 20 - ربع",
+  "158": "التوبة - حزب 20 - 3/8",
+  "159": "التوبة - حزب 20 - نصف",
+  "160": "التوبة - حزب 20 - 5/8",
+  "161": "التوبة - حزب 20 - 3/4",
+  "162": "التوبة - حزب 20 - 7/8",
+  "163": "التوبة - حزب 20 -   ",
+  "164": "التوبة - حزب 21 - ثمن",
+  "165": "التوبة - حزب 21 - ربع",
+  "166": "التوبة - حزب 21 - 3/8",
+  "167": "التوبة - حزب 21 - نصف",
+  "168": "يونس - حزب 21 - 5/8",
+  "169": "يونس - حزب 21 - 3/4",
+  "170": "يونس - حزب 21 - 7/8",
+  "171": "يونس - حزب 21 -   ",
+  "172": "يونس - حزب 22 - ثمن",
+  "173": "يونس - حزب 22 - ربع",
+  "174": "يونس - حزب 22 - 3/8",
+  "175": "يونس - حزب 22 - نصف",
+  "176": "يونس - حزب 22 - 5/8",
+  "177": "يونس - حزب 22 - 3/4",
+  "178": "يونس - حزب 22 - 7/8",
+  "179": "هود - حزب 22 -   ",
+  "180": "هود - حزب 23 - ثمن",
+  "181": "هود - حزب 23 - ربع",
+  "182": "هود - حزب 23 - 3/8",
+  "183": "هود - حزب 23 - نصف",
+  "184": "هود - حزب 23 - 5/8",
+  "185": "هود - حزب 23 - 3/4",
+  "186": "هود - حزب 23 - 7/8",
+  "187": "هود - حزب 23 -   ",
+  "188": "هود - حزب 24 - ثمن",
+  "189": "هود - حزب 24 - ربع",
+  "190": "هود - حزب 24 - 3/8",
+  "191": "يوسف - حزب 24 - نصف",
+  "192": "يوسف - حزب 24 - 5/8",
+  "193": "يوسف - حزب 24 - 3/4",
+  "194": "يوسف - حزب 24 - 7/8",
+  "195": "يوسف - حزب 24 -   ",
+  "196": "يوسف - حزب 25 - ثمن",
+  "197": "يوسف - حزب 25 - ربع",
+  "198": "يوسف - حزب 25 - 3/8",
+  "199": "يوسف - حزب 25 - نصف",
+  "200": "يوسف - حزب 25 - 5/8",
+  "201": "الرعد - حزب 25 - 3/4",
+  "202": "الرعد - حزب 25 - 7/8",
+  "203": "الرعد - حزب 25 -   ",
+  "204": "الرعد - حزب 26 - ثمن",
+  "205": "الرعد - حزب 26 - ربع",
+  "206": "الرعد - حزب 26 - 3/8",
+  "207": "إبراهيم - حزب 26 - نصف",
+  "208": "إبراهيم - حزب 26 - 5/8",
+  "209": "إبراهيم - حزب 26 - 3/4",
+  "210": "إبراهيم - حزب 26 - 7/8",
+  "211": "إبراهيم - حزب 26 -   ",
+  "212": "الحجر - حزب 27 - ثمن",
+  "213": "الحجر - حزب 27 - ربع",
+  "214": "الحجر - حزب 27 - 3/8",
+  "215": "الحجر - حزب 27 - نصف",
+  "216": "النحل - حزب 27 - 5/8",
+  "217": "النحل - حزب 27 - 3/4",
+  "218": "النحل - حزب 27 - 7/8",
+  "219": "النحل - حزب 27 -   ",
+  "220": "النحل - حزب 28 - ثمن",
+  "221": "النحل - حزب 28 - ربع",
+  "222": "النحل - حزب 28 - 3/8",
+  "223": "النحل - حزب 28 - نصف",
+  "224": "النحل - حزب 28 - 5/8",
+  "225": "النحل - حزب 28 - 3/4",
+  "226": "النحل - حزب 28 - 7/8",
+  "227": "النحل - حزب 28 -   ",
+  "228": "الإسراء - حزب 29 - ثمن",
+  "229": "الإسراء - حزب 29 - ربع",
+  "230": "الإسراء - حزب 29 - 3/8",
+  "231": "الإسراء - حزب 29 - نصف",
+  "232": "الإسراء - حزب 29 - 5/8",
+  "233": "الإسراء - حزب 29 - 3/4",
+  "234": "الإسراء - حزب 29 - 7/8",
+  "235": "الإسراء - حزب 29 -   ",
+  "236": "الإسراء - حزب 30 - ثمن",
+  "237": "الكهف - حزب 30 - ربع",
+  "238": "الكهف - حزب 30 - 3/8",
+  "239": "الكهف - حزب 30 - نصف",
+  "240": "الكهف - حزب 30 - 5/8",
+  "241": "الكهف - حزب 30 - 3/4",
+  "242": "الكهف - حزب 30 - 7/8",
+  "243": "الكهف - حزب 30 -   ",
+  "244": "الكهف - حزب 31 - ثمن",
+  "245": "الكهف - حزب 31 - ربع",
+  "246": "مريم - حزب 31 - 3/8",
+  "247": "مريم - حزب 31 - نصف",
+  "248": "مريم - حزب 31 - 5/8",
+  "249": "مريم - حزب 31 - 3/4",
+  "250": "مريم - حزب 31 - 7/8",
+  "251": "مريم - حزب 31 -   ",
+  "252": "طه - حزب 32 - ثمن",
+  "253": "طه - حزب 32 - ربع",
+  "254": "طه - حزب 32 - 3/8",
+  "255": "طه - حزب 32 - نصف",
+  "256": "طه - حزب 32 - 5/8",
+  "257": "طه - حزب 32 - 3/4",
+  "258": "طه - حزب 32 - 7/8",
+  "259": "طه - حزب 32 -   ",
+  "260": "الأنبياء - حزب 33 - ثمن",
+  "261": "الأنبياء - حزب 33 - ربع",
+  "262": "الأنبياء - حزب 33 - 3/8",
+  "263": "الأنبياء - حزب 33 - نصف",
+  "264": "الأنبياء - حزب 33 - 5/8",
+  "265": "الأنبياء - حزب 33 - 3/4",
+  "266": "الأنبياء - حزب 33 - 7/8",
+  "267": "الأنبياء - حزب 33 -   ",
+  "268": "الحج - حزب 34 - ثمن",
+  "269": "الحج - حزب 34 - ربع",
+  "270": "الحج - حزب 34 - 3/8",
+  "271": "الحج - حزب 34 - نصف",
+  "272": "الحج - حزب 34 - 5/8",
+  "273": "الحج - حزب 34 - 3/4",
+  "274": "الحج - حزب 34 - 7/8",
+  "275": "الحج - حزب 34 -   ",
+  "276": "المؤمنون - حزب 35 - ثمن",
+  "277": "المؤمنون - حزب 35 - ربع",
+  "278": "المؤمنون - حزب 35 - 3/8",
+  "279": "المؤمنون - حزب 35 - نصف",
+  "280": "المؤمنون - حزب 35 - 5/8",
+  "281": "المؤمنون - حزب 35 - 3/4",
+  "282": "النور - حزب 35 - 7/8",
+  "283": "النور - حزب 35 -   ",
+  "284": "النور - حزب 36 - ثمن",
+  "285": "النور - حزب 36 - ربع",
+  "286": "النور - حزب 36 - 3/8",
+  "287": "النور - حزب 36 - نصف",
+  "288": "النور - حزب 36 - 5/8",
+  "289": "النور - حزب 36 - 3/4",
+  "290": "الفرقان - حزب 36 - 7/8",
+  "291": "الفرقان - حزب 36 -   ",
+  "292": "الفرقان - حزب 37 - ثمن",
+  "293": "الفرقان - حزب 37 - ربع",
+  "294": "الفرقان - حزب 37 - 3/8",
+  "295": "الفرقان - حزب 37 - نصف",
+  "296": "الشعراء - حزب 37 - 5/8",
+  "297": "الشعراء - حزب 37 - 3/4",
+  "298": "الشعراء - حزب 37 - 7/8",
+  "299": "الشعراء - حزب 37 -   ",
+  "300": "الشعراء - حزب 38 - ثمن",
+  "301": "الشعراء - حزب 38 - ربع",
+  "302": "الشعراء - حزب 38 - 3/8",
+  "303": "النمل - حزب 38 - نصف",
+  "304": "النمل - حزب 38 - 5/8",
+  "305": "النمل - حزب 38 - 3/4",
+  "306": "النمل - حزب 38 - 7/8",
+  "307": "النمل - حزب 38 -   ",
+  "308": "النمل - حزب 39 - ثمن",
+  "309": "النمل - حزب 39 - ربع",
+  "310": "النمل - حزب 39 - 3/8",
+  "311": "القصص - حزب 39 - نصف",
+  "312": "القصص - حزب 39 - 5/8",
+  "313": "القصص - حزب 39 - 3/4",
+  "314": "القصص - حزب 39 - 7/8",
+  "315": "القصص - حزب 39 -   ",
+  "316": "القصص - حزب 40 - ثمن",
+  "317": "القصص - حزب 40 - ربع",
+  "318": "القصص - حزب 40 - 3/8",
+  "319": "العنكبوت - حزب 40 - نصف",
+  "320": "العنكبوت - حزب 40 - 5/8",
+  "321": "العنكبوت - حزب 40 - 3/4",
+  "322": "العنكبوت - حزب 40 - 7/8",
+  "323": "العنكبوت - حزب 40 -   ",
+  "324": "العنكبوت - حزب 41 - ثمن",
+  "325": "الروم - حزب 41 - ربع",
+  "326": "الروم - حزب 41 - 3/8",
+  "327": "الروم - حزب 41 - نصف",
+  "328": "الروم - حزب 41 - 5/8",
+  "329": "الروم - حزب 41 - 3/4",
+  "330": "لقمان - حزب 41 - 7/8",
+  "331": "لقمان - حزب 41 -   ",
+  "332": "لقمان - حزب 42 - ثمن",
+  "333": "السجدة - حزب 42 - ربع",
+  "334": "السجدة - حزب 42 - 3/8",
+  "335": "السجدة - حزب 42 - نصف",
+  "336": "الأحزاب - حزب 42 - 5/8",
+  "337": "الأحزاب - حزب 42 - 3/4",
+  "338": "الأحزاب - حزب 42 - 7/8",
+  "339": "الأحزاب - حزب 42 -   ",
+  "340": "الأحزاب - حزب 43 - ثمن",
+  "341": "الأحزاب - حزب 43 - ربع",
+  "342": "الأحزاب - حزب 43 - 3/8",
+  "343": "الأحزاب - حزب 43 - نصف",
+  "344": "الأحزاب - حزب 43 - 5/8",
+  "345": "سبأ - حزب 43 - 3/4",
+  "346": "سبأ - حزب 43 - 7/8",
+  "347": "سبأ - حزب 43 -   ",
+  "348": "سبأ - حزب 44 - ثمن",
+  "349": "سبأ - حزب 44 - ربع",
+  "350": "فاطر - حزب 44 - 3/8",
+  "351": "فاطر - حزب 44 - نصف",
+  "352": "فاطر - حزب 44 - 5/8",
+  "353": "فاطر - حزب 44 - 3/4",
+  "354": "يس - حزب 44 - 7/8",
+  "355": "يس - حزب 44 -   ",
+  "356": "يس - حزب 45 - ثمن",
+  "357": "يس - حزب 45 - ربع",
+  "358": "يس - حزب 45 - 3/8",
+  "359": "الصافات - حزب 45 - نصف",
+  "360": "الصافات - حزب 45 - 5/8",
+  "361": "الصافات - حزب 45 - 3/4",
+  "362": "الصافات - حزب 45 - 7/8",
+  "363": "الصافات - حزب 45 -   ",
+  "364": "الصافات - حزب 46 - ثمن",
+  "365": "ص - حزب 46 - ربع",
+  "366": "ص - حزب 46 - 3/8",
+  "367": "ص - حزب 46 - نصف",
+  "368": "ص - حزب 46 - 5/8",
+  "369": "الزمر - حزب 46 - 3/4",
+  "370": "الزمر - حزب 46 - 7/8",
+  "371": "الزمر - حزب 46 -   ",
+  "372": "الزمر - حزب 47 - ثمن",
+  "373": "الزمر - حزب 47 - ربع",
+  "374": "الزمر - حزب 47 - 3/8",
+  "375": "الزمر - حزب 47 - نصف",
+  "376": "غافر - حزب 47 - 5/8",
+  "377": "غافر - حزب 47 - 3/4",
+  "378": "غافر - حزب 47 - 7/8",
+  "379": "غافر - حزب 47 -   ",
+  "380": "غافر - حزب 48 - ثمن",
+  "381": "غافر - حزب 48 - ربع",
+  "382": "غافر - حزب 48 - 3/8",
+  "383": "فصلت - حزب 48 - نصف",
+  "384": "فصلت - حزب 48 - 5/8",
+  "385": "فصلت - حزب 48 - 3/4",
+  "386": "فصلت - حزب 48 - 7/8",
+  "387": "فصلت - حزب 48 -   ",
+  "388": "الشورى - حزب 49 - ثمن",
+  "389": "الشورى - حزب 49 - ربع",
+  "390": "الشورى - حزب 49 - 3/8",
+  "391": "الشورى - حزب 49 - نصف",
+  "392": "الشورى - حزب 49 - 5/8",
+  "393": "الشورى - حزب 49 - 3/4",
+  "394": "الزخرف - حزب 49 - 7/8",
+  "395": "الزخرف - حزب 49 -   ",
+  "396": "الزخرف - حزب 50 - ثمن",
+  "397": "الزخرف - حزب 50 - ربع",
+  "398": "الزخرف - حزب 50 - 3/8",
+  "399": "الدخان - حزب 50 - نصف",
+  "400": "الدخان - حزب 50 - 5/8",
+  "401": "الجاثية - حزب 50 - 3/4",
+  "402": "الجاثية - حزب 50 - 7/8",
+  "403": "الجاثية - حزب 50 -   ",
+  "404": "الأحقاف - حزب 51 - ثمن",
+  "405": "الأحقاف - حزب 51 - ربع",
+  "406": "الأحقاف - حزب 51 - 3/8",
+  "407": "محمد - حزب 51 - نصف",
+  "408": "محمد - حزب 51 - 5/8",
+  "409": "محمد - حزب 51 - 3/4",
+  "410": "الفتح - حزب 51 - 7/8",
+  "411": "الفتح - حزب 51 -   ",
+  "412": "الفتح - حزب 52 - ثمن",
+  "413": "الفتح - حزب 52 - ربع",
+  "414": "الحجرات - حزب 52 - 3/8",
+  "415": "الحجرات - حزب 52 - نصف",
+  "416": "ق - حزب 52 - 5/8",
+  "417": "ق - حزب 52 - 3/4",
+  "418": "ق - حزب 52 - 7/8",
+  "419": "الذاريات - حزب 52 -   ",
+  "420": "الذاريات - حزب 53 - ثمن",
+  "421": "الطور - حزب 53 - ربع",
+  "422": "الطور - حزب 53 - 3/8",
+  "423": "النجم - حزب 53 - نصف",
+  "424": "النجم - حزب 53 - 5/8",
+  "425": "القمر - حزب 53 - 3/4",
+  "426": "القمر - حزب 53 - 7/8",
+  "427": "القمر - حزب 53 -   ",
+  "428": "الرحمن - حزب 54 - ثمن",
+  "429": "الرحمن - حزب 54 - ربع",
+  "430": "الواقعة - حزب 54 - 3/8",
+  "431": "الواقعة - حزب 54 - نصف",
+  "432": "الحديد - حزب 54 - 5/8",
+  "433": "الحديد - حزب 54 - 3/4",
+  "434": "الحديد - حزب 54 - 7/8",
+  "435": "الحديد - حزب 54 -   ",
+  "436": "المجادلة - حزب 55 - ثمن",
+  "437": "المجادلة - حزب 55 - ربع",
+  "438": "الحشر - حزب 55 - 3/8",
+  "439": "الحشر - حزب 55 - نصف",
+  "440": "الحشر - حزب 55 - 5/8",
+  "441": "الممتحنة - حزب 55 - 3/4",
+  "442": "الممتحنة - حزب 55 - 7/8",
+  "443": "الصف - حزب 55 -   ",
+  "444": "الجمعة - حزب 56 - ثمن",
+  "445": "المنافقون - حزب 56 - ربع",
+  "446": "التغابن - حزب 56 - 3/8",
+  "447": "التغابن - حزب 56 - نصف",
+  "448": "الطلاق - حزب 56 - 5/8",
+  "449": "الطلاق - حزب 56 - 3/4",
+  "450": "التحريم - حزب 56 - 7/8",
+  "451": "التحريم - حزب 56 -   ",
+  "452": "الملك - حزب 57 - ثمن",
+  "453": "القلم - حزب 57 - ربع",
+  "454": "القلم - حزب 57 - 3/8",
+  "455": "الحاقة - حزب 57 - نصف",
+  "456": "الحاقة - حزب 57 - 5/8",
+  "457": "المعارج - حزب 57 - 3/4",
+  "458": "نوح - حزب 57 - 7/8",
+  "459": "نوح - حزب 57 -   ",
+  "460": "الجن - حزب 58 - ثمن",
+  "461": "المزمل - حزب 58 - ربع",
+  "462": "المدثر - حزب 58 - 3/8",
+  "463": "المدثر - حزب 58 - نصف",
+  "464": "القيامة - حزب 58 - 5/8",
+  "465": "الإنسان - حزب 58 - 3/4",
+  "466": "المرسلات - حزب 58 - 7/8",
+  "467": "المرسلات - حزب 58 -   ",
+  "468": "النبأ - حزب 59 - ثمن",
+  "469": "النازعات - حزب 59 - ربع",
+  "470": "عبس - حزب 59 - 3/8",
+  "471": "التكوير - حزب 59 - نصف",
+  "472": "الإنفطار، المطففين - حزب 59 - 5/8",
+  "473": "الإنشقاق - حزب 59 - 3/4",
+  "474": "البروج - حزب 59 - 7/8",
+  "475": "الطارق - حزب 59 -   ",
+  "476": "الأعلى، الغاشية - حزب 60 - ثمن",
+  "477": "الفجر - حزب 60 - ربع",
+  "478": "البلد، الشمس - حزب 60 - 3/8",
+  "479": "الليل، الضحى - حزب 60 - نصف",
+  "480": "الشرح، التين، العلق - حزب 60 - 5/8",
+  "481": "القدر، البينة - حزب 60 - 5/8",
+  "482": "الزلزلة، العاديات - حزب 60 - 3/4",
+  "483": "القارعة، التكاثر، العصر - حزب 60 - 3/4",
+  "484": "الهمزة، الفيل، قريش - حزب 60 - 7/8",
+  "485": "الماعون، الكوثر، الكافرون، النصر - حزب 60 -   ",
+  "486": "المسد، الإخلاص، الفلق، الناس - حزب 60 -   "
+}
+
+Fichier: app/src/main\res\values\colors.xml
+<resources>
+    <color name="primary">#6200EE</color> <!-- Violet Material -->
+    <color name="primaryVariant">#3700B3</color>
+    <color name="secondary">#03DAC5</color> <!-- Bleu-vert -->
+    <color name="secondaryVariant">#018786</color>
+    <color name="background">#121212</color> <!-- Mode sombre -->
+    <color name="surface">#1E1E1E</color>
+    <color name="error">#CF6679</color>
+    <color name="onPrimary">#FFFFFF</color>
+    <color name="onSecondary">#000000</color>
+    <color name="onBackground">#FFFFFF</color>
+    <color name="onSurface">#FFFFFF</color>
+</resources>
+
+Fichier: app/src/main\res\values\strings.xml
+<resources>
+    <string name="app_name">Quran_Athman_Reader</string>
+</resources>
+
+Fichier: app/src/main\res\values\themes.xml
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Quran_Athman_Reader" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+
+    <style name="Theme.Quran_Athman_Reader" parent="Base.Theme.Quran_Athman_Reader" />
+</resources>
+
+Fichier: app/src/main\res\values-night\themes.xml
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Quran_Athman_Reader" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your dark theme here. -->
+        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    </style>
+</resources>
+
+Fichier: app/src/main\res\xml\backup_rules.xml
+<?xml version="1.0" encoding="utf-8"?><!--
+   Sample backup rules file; uncomment and customize as necessary.
+   See https://developer.android.com/guide/topics/data/autobackup
+   for details.
+   Note: This file is ignored for devices older that API 31
+   See https://developer.android.com/about/versions/12/backup-restore
+-->
+<full-backup-content>
+    <!--
+   <include domain="sharedpref" path="."/>
+   <exclude domain="sharedpref" path="device.xml"/>
+-->
+</full-backup-content>
+
+Fichier: app/src/main\res\xml\data_extraction_rules.xml
+<?xml version="1.0" encoding="utf-8"?><!--
+   Sample data extraction rules file; uncomment and customize as necessary.
+   See https://developer.android.com/about/versions/12/backup-restore#xml-changes
+   for details.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <!-- TODO: Use <include> and <exclude> to control what is backed up.
+        <include .../>
+        <exclude .../>
+        -->
+    </cloud-backup>
+    <!--
+    <device-transfer>
+        <include .../>
+        <exclude .../>
+    </device-transfer>
+    -->
+</data-extraction-rules>
+
+Fichier: app/src/test\java\com\example\quran_athman_reader\ExampleUnitTest.kt
+package com.example.quran_athman_reader
+
+import org.junit.Test
+
+import org.junit.Assert.*
+
+/**
+ * Example local unit test, which will execute on the development machine (host).
+ *
+ * See [testing documentation](http://d.android.com/tools/testing).
+ */
+class ExampleUnitTest {
+    @Test
+    fun addition_isCorrect() {
+        assertEquals(4, 2 + 2)
+    }
+}
+

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #121212;
+            color: #FFFFFF;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            flex: 1;
+        }
+
+        h1 {
+            color: #FFD700;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .card {
+            background: #1E1E1E;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .app-info p {
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            text-align: justify;
+        }
+
+        .arabic-text {
+            direction: rtl;
+            font-size: 1.1rem;
+        }
+
+        .contact-link {
+            text-align: center;
+            padding: 15px;
+        }
+
+        .button {
+            display: inline-block;
+            background: #FFD700;
+            color: #121212;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            margin-top: 10px;
+            transition: background 0.3s ease;
+            font-weight: 600;
+        }
+
+        /* Explicitly define all link states */
+        .button:link,
+        .button:visited,
+        .button:hover,
+        .button:active {
+            color: #121212; /* Ensure text color remains consistent */
+            text-decoration: none;
+        }
+
+        .button:hover {
+            background: #FFECB3;
+        }
+
+        footer {
+            text-align: center;
+            color: #757575;
+            font-size: 0.9rem;
+            padding: 20px 0;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .card {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Contact Us</h1>
+
+    <div class="card app-info">
+        <p class="arabic-text">
+            هذا البرنامج لايحتوي على أية إعلانات أو إشهارات. الهدف منه خدمة كتاب الله عزوجل وتيسير حفظه.
+            ونطمح بمشيئة الله تطويره من خلال إصدارات قادمة. كما نرحب بملاحظاتكم واقتراحاتكم ويمكنكم
+            المساهمة في نشره بوضع 5 نجوم وبمشاركته، والدال على الخير كفاعله. ونسأل الله تعالى القبول.
+        </p>
+        <p>
+            This app has no ads. Its goal is to serve the Quran and aids memorization. We plan future updates,
+            welcome your feedback, and appreciate a 5-star rating and sharing. May Allah accept.
+        </p>
+    </div>
+
+    <div class="contact-link">
+        <a href="https://forms.gle/F5xXeSGYRkESDKX37" target="_blank" class="button">
+            Contact Us via Google Form
+        </a>
+    </div>
+</div>
+
+<footer>
+    © 2025 Quran Reader App | All Rights Reserved
+</footer>
+</body>
+</html>

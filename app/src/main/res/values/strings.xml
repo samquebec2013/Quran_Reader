@@ -1,3 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Quran_Athman_Reader</string>
+    <string name="app_name">Quran Reader</string>
+    <string name="about_quran_reader">About Quran Reader</string>
+    <string name="add_book">Add Book from ZIP</string>
+    <string name="arabic">Arabic</string>
+    <string name="audio">Audio</string>
+    <string name="book_added">Book added successfully</string>
+    <string name="book_config_not_loaded">Failed to load book configuration</string>
+    <string name="book_cover">Book Cover</string>
+    <string name="book_deleted">Book deleted</string>
+    <string name="book_exists">Book already exists</string>
+    <string name="close">Close</string>
+    <string name="close_app_message">Are you sure you want to close the app?</string>
+    <string name="close_app_title">Close App</string>
+    <string name="confirm_delete_message">Are you sure you want to delete this book?</string>
+    <string name="confirm_deletion">Confirm Deletion</string>
+    <string name="contact_us">Contact Us</string>
+    <string name="create_book">Create a Book in Quran Reader App</string>
+    <string name="default_book_set">Set as default book</string>
+    <string name="delete_book">Delete Selected Book</string>
+    <string name="download">Download</string>
+    <string name="english">English</string>
+    <string name="error_installing_book">Error installing book</string>
+    <string name="error_loading_book">Error loading book</string>
+    <string name="fullscreen_mode">Fullscreen Mode</string>
+    <string name="home">Home</string>
+    <string name="how_to_use">How to Use Quran Reader</string>
+    <string name="index">Index</string>
+    <string name="installing_book">Installing book...</string>
+    <string name="invalid_page_number">Invalid page number</string>
+    <string name="invalid_zip">Invalid ZIP file</string>
+    <string name="keep_screen_on">Keep Screen On</string>
+    <string name="language">Language</string>
+    <string name="library_title">Books Library</string>
+    <string name="manage_books">Manage Books</string>
+    <string name="night_mode">Night Mode</string>
+    <string name="no">No</string>
+    <string name="no_saved_pages">No saved pages</string>
+    <string name="page_already_saved">Page already saved</string>
+    <string name="page_saved">Page saved</string>
+    <string name="reset">Reset</string>
+    <string name="save_page">Save Page</string>
+    <string name="saved_pages">Saved Pages</string>
+    <string name="scroll_direction">Scroll Direction</string>
+    <string name="scroll_orientation">Horizontal Scrolling</string>
+    <string name="select_default_book">Set as Default Book</string>
+    <string name="settings">Settings</string>
+    <string name="share_app">Share App</string>
+    <string name="tafsir">Tafsir</string>
+    <string name="yes">Yes</string>
+
 </resources>

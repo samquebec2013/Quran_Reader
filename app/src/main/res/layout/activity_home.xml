@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#A27BA865"
+    android:orientation="vertical">
+
+    <!-- Close Button at Top Right -->
+    <ImageView
+        android:id="@+id/closeButton"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_gravity="end|top"
+        android:src="@drawable/ic_close"
+        android:contentDescription="@string/close"
+        android:padding="8dp"
+        android:background="@drawable/close_button_background"
+        android:visibility="visible" />
+
+    <!-- Carousel Title -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/library_title"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:gravity="center"
+        android:padding="8dp" />
+
+    <!-- Carousel -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/bookCarousel"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal" />
+
+    <!-- About Quran Reader Link -->
+    <Button
+        android:id="@+id/aboutLink"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/about_quran_reader"
+        android:textSize="18sp"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        android:backgroundTint="#DBC91B"
+        android:gravity="center"
+        android:layout_marginBottom="16dp"
+        android:layout_gravity="center" />
+
+
+
+
+    <!-- Menu Layout -->
+    <LinearLayout
+        android:id="@+id/menuLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="visible"
+        android:padding="8dp"
+        android:background="@drawable/menu_background"
+        android:elevation="8dp"
+        android:layout_gravity="bottom">
+
+        <ImageView
+            android:id="@+id/manageBooksButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_book"
+            android:contentDescription="@string/manage_books"
+            android:scaleType="centerInside"
+            android:padding="8dp"/>
+    </LinearLayout>
+</LinearLayout>

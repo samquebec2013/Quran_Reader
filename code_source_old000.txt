@@ -1,0 +1,1559 @@
+Fichier: app/src/main\AndroidManifest.xml
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Quran_Athman_Reader"
+        tools:targetApi="31">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
+
+Fichier: app/src/main\java\com\example\quran_athman_reader\BookmarkFragment.kt
+package com.example.quran_athman_reader
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import androidx.fragment.app.DialogFragment
+
+class BookmarkFragment : DialogFragment() {
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.fragment_bookmark, container, false)
+
+        val closeButton: Button = view.findViewById(R.id.closeButton)
+        closeButton.setOnClickListener { dismiss() }
+
+        return view
+    }
+}
+
+Fichier: app/src/main\java\com\example\quran_athman_reader\ButtonActions.kt
+package com.example.quran_athman_reader
+
+import android.content.Intent
+import android.view.View
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+
+object  ButtonActions {
+
+    fun openChapters(view: View) {
+        Toast.makeText(view.context, "Chapitres affichés", Toast.LENGTH_SHORT).show()
+        val activity = view.context as? AppCompatActivity
+        activity?.let {
+            ChaptersFragment().show(it.supportFragmentManager, "chaptersFragment")
+        }
+    }
+
+    fun savePage(view: View) {
+        Toast.makeText(view.context, "Page enregistrée", Toast.LENGTH_SHORT).show()
+        val activity = view.context as? AppCompatActivity
+        activity?.let {
+            BookmarkFragment().show(it.supportFragmentManager, "bookmarkFragment")
+        }
+    }
+
+    fun shareApp(view: View) {
+        val context = view.context
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, " D'oeuvre cette application de lecture de livres !")
+        }
+        context.startActivity(Intent.createChooser(intent, "Partager via"))
+    }
+
+    fun openBookmark(view: View) {
+        Toast.makeText(view.context, "Ouverture du marque-page", Toast.LENGTH_SHORT).show()
+        val activity = view.context as? AppCompatActivity
+        activity?.let {
+            BookmarkFragment().show(it.supportFragmentManager, "bookmarkFragment")
+        }
+    }
+
+    fun openSettings(view: View) {
+        Toast.makeText(view.context, "Ouverture des paramètres", Toast.LENGTH_SHORT).show()
+        val activity = view.context as? AppCompatActivity
+        activity?.let {
+            SettingsFragment().show(it.supportFragmentManager, "settingsFragment")
+        }
+    }
+}
+
+Fichier: app/src/main\java\com\example\quran_athman_reader\Category_Adapter.kt
+package com.example.quran_athman_reader
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+
+class CategoryAdapter(
+    private val categories: List<Category>,
+    private val onItemSelected: (String) -> Unit // Pass the page number as a String
+) : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
+
+    inner class CategoryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val categoryTitle: TextView = view.findViewById(R.id.categoryTitle)
+        val subcategoriesRecyclerView: RecyclerView = view.findViewById(R.id.recyclerViewSubcategories)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_category, parent, false)
+        return CategoryViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
+        val category = categories[position]
+
+        // Set the category title
+        holder.categoryTitle.text = category.title
+
+        // Toggle visibility of subcategories when the category title is clicked
+        holder.categoryTitle.setOnClickListener {
+            holder.subcategoriesRecyclerView.visibility =
+                if (holder.subcategoriesRecyclerView.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+        }
+
+        // Set up the RecyclerView for subcategories with a GridLayoutManager (3 columns)
+        holder.subcategoriesRecyclerView.layoutManager = GridLayoutManager(holder.itemView.context, 3)
+        holder.subcategoriesRecyclerView.adapter = SubcategoryAdapter(category.subcategories) { selectedItem ->
+            // Pass the page number (as a String) to the listener
+            onItemSelected(selectedItem.page)
+        }
+    }
+
+    override fun getItemCount(): Int = categories.size
+}
+Fichier: app/src/main\java\com\example\quran_athman_reader\ChaptersFragment.kt
+package com.example.quran_athman_reader
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import androidx.fragment.app.DialogFragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+
+class ChaptersFragment : DialogFragment() {
+
+    private var onPageSelected: ((String) -> Unit)? = null
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.fragment_chapters, container, false)
+
+        // Use the filtered data from Data.kt
+        val recyclerView: RecyclerView = view.findViewById(R.id.chapterRecyclerView)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = CategoryAdapter(chapters) { page ->
+            // Pass the selected page number back to the activity
+            onPageSelected?.invoke(page)
+            dismiss()
+        }
+
+        // Close button
+        val closeButton: Button = view.findViewById(R.id.closeButton)
+        closeButton.setOnClickListener { dismiss() }
+
+        return view
+    }
+
+    fun setOnPageSelectedListener(listener: (String) -> Unit) {
+        onPageSelected = listener
+    }
+}
+Fichier: app/src/main\java\com\example\quran_athman_reader\Data.kt
+package com.example.quran_athman_reader
+
+// Data classes
+data class Category(
+    val title: String,
+    val subcategories: List<Subcategory> = emptyList()
+)
+
+data class Subcategory(
+    val name: String,
+    val page: String
+)
+
+// Filtered Data
+val chapters = listOf(
+    Category("📖 Sourat", listOf(
+        Subcategory("الفاتحة", "2"),
+        Subcategory("البقرة", "3"),
+        Subcategory("آل عمران", "42"),
+        Subcategory("النساء", "63"),
+        Subcategory("المائدة", "87"),
+        Subcategory("الأنعام", "105"),
+        Subcategory("الأعراف", "123"),
+        Subcategory("الأنفال", "143"),
+        Subcategory("التوبة", "151"),
+        Subcategory("يونس", "168"),
+        Subcategory("هود", "179"),
+        Subcategory("يوسف", "191"),
+        Subcategory("الرعد", "201"),
+        Subcategory("إبراهيم", "207"),
+        Subcategory("الحجر", "212"),
+        Subcategory("النحل", "216"),
+        Subcategory("الإسراء", "228"),
+        Subcategory("الكهف", "237"),
+        Subcategory("مريم", "246"),
+        Subcategory("طه", "252"),
+        Subcategory("الأنبياء", "260"),
+        Subcategory("الحج", "268"),
+        Subcategory("المؤمنون", "276"),
+        Subcategory("النور", "282"),
+        Subcategory("الفرقان", "290"),
+        Subcategory("الشعراء", "296"),
+        Subcategory("النمل", "303"),
+        Subcategory("القصص", "311"),
+        Subcategory("العنكبوت", "319"),
+        Subcategory("الروم", "325"),
+        Subcategory("لقمان", "330"),
+        Subcategory("السجدة", "333"),
+        Subcategory("الأحزاب", "336"),
+        Subcategory("سبأ", "345"),
+        Subcategory("فاطر", "350"),
+        Subcategory("يس", "354"),
+        Subcategory("الصافات", "359"),
+        Subcategory("ص", "365"),
+        Subcategory("الزمر", "369"),
+        Subcategory("غافر", "376"),
+        Subcategory("فصلت", "383"),
+        Subcategory("الشورى", "388"),
+        Subcategory("الزخرف", "394"),
+        Subcategory("الدخان", "399"),
+        Subcategory("الجاثية", "401"),
+        Subcategory("الأحقاف", "404"),
+        Subcategory("محمد", "407"),
+        Subcategory("الفتح", "410"),
+        Subcategory("الحجرات", "414"),
+        Subcategory("ق", "416"),
+        Subcategory("الذاريات", "419"),
+        Subcategory("الطور", "421"),
+        Subcategory("النجم", "423"),
+        Subcategory("القمر", "425"),
+        Subcategory("الرحمن", "428"),
+        Subcategory("الواقعة", "430"),
+        Subcategory("الحديد", "432"),
+        Subcategory("المجادلة", "436"),
+        Subcategory("الحشر", "438"),
+        Subcategory("الممتحنة", "441"),
+        Subcategory("الصف", "443"),
+        Subcategory("الجمعة", "444"),
+        Subcategory("المنافقون", "445"),
+        Subcategory("التغابن", "446"),
+        Subcategory("الطلاق", "448"),
+        Subcategory("التحريم", "450"),
+        Subcategory("الملك", "452"),
+        Subcategory("القلم", "453"),
+        Subcategory("الحاقة", "455"),
+        Subcategory("المعارج", "457"),
+        Subcategory("نوح", "458"),
+        Subcategory("الجن", "460"),
+        Subcategory("المزمل", "461"),
+        Subcategory("المدثر", "462"),
+        Subcategory("القيامة", "464"),
+        Subcategory("الإنسان", "465"),
+        Subcategory("المرسلات", "466"),
+        Subcategory("النبأ", "468"),
+        Subcategory("النازعات", "469"),
+        Subcategory("عبس", "470"),
+        Subcategory("التكوير", "471"),
+        Subcategory("الإنفطار", "472"),
+        Subcategory("المطففين", "472"),
+        Subcategory("الإنشقاق", "473"),
+        Subcategory("البروج", "474"),
+        Subcategory("الطارق", "475"),
+        Subcategory("الأعلى", "476"),
+        Subcategory("الغاشية", "476"),
+        Subcategory("الفجر", "477"),
+        Subcategory("البلد", "478"),
+        Subcategory("الشمس", "478"),
+        Subcategory("الليل", "479"),
+        Subcategory("الضحى", "479"),
+        Subcategory("الشرح", "480"),
+        Subcategory("التين", "480"),
+        Subcategory("العلق", "480"),
+        Subcategory("القدر", "481"),
+        Subcategory("البينة", "481"),
+        Subcategory("الزلزلة", "482"),
+        Subcategory("العاديات", "482"),
+        Subcategory("القارعة", "483"),
+        Subcategory("التكاثر", "483"),
+        Subcategory("العصر", "483"),
+        Subcategory("الهمزة", "484"),
+        Subcategory("الفيل", "484"),
+        Subcategory("قريش", "484"),
+        Subcategory("الماعون", "485"),
+        Subcategory("الكوثر", "485"),
+        Subcategory("الكافرون", "485"),
+        Subcategory("النصر", "485"),
+        Subcategory("المسد", "486"),
+        Subcategory("الإخلاص", "486"),
+        Subcategory("الفلق", "486"),
+        Subcategory("الناس", "486")
+    )),
+    Category("📚 Hizb", listOf(
+        Subcategory("حزب 1", "3"),
+        Subcategory("حزب 2", "12"),
+        Subcategory("حزب 3", "20"),
+        Subcategory("حزب 4", "28"),
+        Subcategory("حزب 5", "36"),
+        Subcategory("حزب 6", "44"),
+        Subcategory("حزب 7", "52"),
+        Subcategory("حزب 8", "60"),
+        Subcategory("حزب 9", "68"),
+        Subcategory("حزب 10", "76"),
+        Subcategory("حزب 11", "84"),
+        Subcategory("حزب 12", "92"),
+        Subcategory("حزب 13", "100"),
+        Subcategory("حزب 14", "108"),
+        Subcategory("حزب 15", "116"),
+        Subcategory("حزب 16", "124"),
+        Subcategory("حزب 17", "132"),
+        Subcategory("حزب 18", "140"),
+        Subcategory("حزب 19", "148"),
+        Subcategory("حزب 20", "156"),
+        Subcategory("حزب 21", "164"),
+        Subcategory("حزب 22", "172"),
+        Subcategory("حزب 23", "180"),
+        Subcategory("حزب 24", "188"),
+        Subcategory("حزب 25", "196"),
+        Subcategory("حزب 26", "204"),
+        Subcategory("حزب 27", "212"),
+        Subcategory("حزب 28", "220"),
+        Subcategory("حزب 29", "228"),
+        Subcategory("حزب 30", "236"),
+        Subcategory("حزب 31", "244"),
+        Subcategory("حزب 32", "252"),
+        Subcategory("حزب 33", "260"),
+        Subcategory("حزب 34", "268"),
+        Subcategory("حزب 35", "276"),
+        Subcategory("حزب 36", "284"),
+        Subcategory("حزب 37", "292"),
+        Subcategory("حزب 38", "300"),
+        Subcategory("حزب 39", "308"),
+        Subcategory("حزب 40", "316"),
+        Subcategory("حزب 41", "324"),
+        Subcategory("حزب 42", "332"),
+        Subcategory("حزب 43", "340"),
+        Subcategory("حزب 44", "348"),
+        Subcategory("حزب 45", "356"),
+        Subcategory("حزب 46", "364"),
+        Subcategory("حزب 47", "372"),
+        Subcategory("حزب 48", "380"),
+        Subcategory("حزب 49", "388"),
+        Subcategory("حزب 50", "396"),
+        Subcategory("حزب 51", "404"),
+        Subcategory("حزب 52", "412"),
+        Subcategory("حزب 53", "420"),
+        Subcategory("حزب 54", "428"),
+        Subcategory("حزب 55", "436"),
+        Subcategory("حزب 56", "444"),
+        Subcategory("حزب 57", "452"),
+        Subcategory("حزب 58", "460"),
+        Subcategory("حزب 59", "468"),
+        Subcategory("حزب 60", "476")
+    )),
+    Category("📜 Jozh", listOf(
+        Subcategory("جزء 1", "3"),
+        Subcategory("جزء 2", "20"),
+        Subcategory("جزء 3", "36"),
+        Subcategory("جزء 4", "52"),
+        Subcategory("جزء 5", "68"),
+        Subcategory("جزء 6", "84"),
+        Subcategory("جزء 7", "100"),
+        Subcategory("جزء 8", "116"),
+        Subcategory("جزء 9", "132"),
+        Subcategory("جزء 10", "148"),
+        Subcategory("جزء 11", "164"),
+        Subcategory("جزء 12", "180"),
+        Subcategory("جزء 13", "196"),
+        Subcategory("جزء 14", "212"),
+        Subcategory("جزء 15", "228"),
+        Subcategory("جزء 16", "244"),
+        Subcategory("جزء 17", "260"),
+        Subcategory("جزء 18", "276"),
+        Subcategory("جزء 19", "292"),
+        Subcategory("جزء 20", "308"),
+        Subcategory("جزء 21", "324"),
+        Subcategory("جزء 22", "340"),
+        Subcategory("جزء 23", "356"),
+        Subcategory("جزء 24", "372"),
+        Subcategory("جزء 25", "388"),
+        Subcategory("جزء 26", "404"),
+        Subcategory("جزء 27", "420"),
+        Subcategory("جزء 28", "436"),
+        Subcategory("جزء 29", "452"),
+        Subcategory("جزء 30", "468")
+    )),
+    Category("⭐ Souar et Ayat-fadila", listOf(
+        Subcategory("آية الكرسي", "490"),
+        Subcategory("سورة الفاتحة", "491"),
+        Subcategory("سورة الإخلاص", "492")
+    )),
+    Category("🤲 Douaa", listOf(
+        Subcategory("دعاء الصباح", "545"),
+        Subcategory("دعاء المساء", "546"),
+        Subcategory("دعاء قبل النوم", "547")
+    ))
+)
+Fichier: app/src/main\java\com\example\quran_athman_reader\ImageAdapter.kt
+package com.example.quran_athman_reader
+
+import android.app.Activity
+import android.content.Context
+import android.graphics.BitmapFactory
+import android.graphics.Point
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.viewpager.widget.PagerAdapter
+import java.io.IOException
+
+class ImageAdapter(private val context: Context, private val imagePaths: List<String>) : PagerAdapter() {
+
+    var isNightMode: Boolean = false
+    private val screenWidth: Int
+    private val screenHeight: Int
+
+    init {
+        val display = (context as Activity).windowManager.defaultDisplay
+        val size = Point()
+        display.getSize(size)
+        screenWidth = size.x
+        screenHeight = size.y
+    }
+
+    override fun getCount(): Int = imagePaths.size
+
+    override fun isViewFromObject(view: View, `object`: Any): Boolean = view == `object`
+
+    override fun instantiateItem(container: ViewGroup, position: Int): Any {
+        val inflater = LayoutInflater.from(context)
+        val view = inflater.inflate(R.layout.item_image, container, false)
+        val imageView: ImageView = view.findViewById(R.id.imageView)
+
+        val imagePath = imagePaths[position] // Example: "mobile/page1.jpg"
+        try {
+            val inputStream = context.assets.open(imagePath)
+            val bitmap = BitmapFactory.decodeStream(inputStream)
+            imageView.setImageBitmap(bitmap)
+            inputStream.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        imageView.layoutParams.width = screenWidth
+        imageView.layoutParams.height = screenHeight
+        imageView.scaleType = ImageView.ScaleType.FIT_CENTER
+
+        if (isNightMode) applyNightMode(imageView)
+
+        container.addView(view)
+        return view
+    }
+
+    override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
+        container.removeView(`object` as View)
+    }
+
+    private fun applyNightMode(imageView: ImageView) {
+        val matrix = android.graphics.ColorMatrix()
+        matrix.set(
+            floatArrayOf(
+                -1f,  0f,  0f,  0f, 255f,
+                0f, -1f,  0f,  0f, 255f,
+                0f,  0f, -1f,  0f, 255f,
+                0f,  0f,  0f,  1f,   0f
+            )
+        )
+        imageView.colorFilter = android.graphics.ColorMatrixColorFilter(matrix)
+    }
+}
+
+Fichier: app/src/main\java\com\example\quran_athman_reader\MainActivity.kt
+package com.example.quran_athman_reader
+
+import android.content.SharedPreferences
+import android.os.Bundle
+import android.view.GestureDetector
+import android.view.MotionEvent
+import android.view.View
+import android.view.WindowManager
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.viewpager.widget.ViewPager
+
+class MainActivity : AppCompatActivity(), SettingsFragment.SettingsChangeListener {
+
+    private lateinit var viewPager: ViewPager
+    private lateinit var menuLayout: LinearLayout
+    private lateinit var gestureDetector: GestureDetector
+    private lateinit var closeButton: ImageView
+    private lateinit var openChaptersButton: ImageView
+    private lateinit var savePageButton: ImageView
+    private lateinit var shareAppButton: ImageView
+    private lateinit var openBookmarkButton: ImageView
+    private lateinit var openSettingsButton: ImageView
+    private lateinit var sharedPreferences: SharedPreferences
+
+    private val savedPages = mutableListOf<Int>()
+    private val totalPages = 486
+    private val imageList = (1..totalPages).map { "quran/page$it.jpg" }
+
+    private lateinit var adapter: ImageAdapter
+    private var isNightMode = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        window.decorView.systemUiVisibility = (
+                View.SYSTEM_UI_FLAG_FULLSCREEN or
+                        View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
+                        View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                )
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+        viewPager = findViewById(R.id.viewPager)
+        menuLayout = findViewById(R.id.menuLayout)
+        closeButton = findViewById(R.id.closeButton)
+        openChaptersButton = findViewById(R.id.openChapters)
+        savePageButton = findViewById(R.id.savePage)
+        shareAppButton = findViewById(R.id.shareApp)
+        openBookmarkButton = findViewById(R.id.openBookmark)
+        openSettingsButton = findViewById(R.id.openSettings)
+
+        sharedPreferences = getSharedPreferences("AppSettings", MODE_PRIVATE)
+        isNightMode = sharedPreferences.getBoolean("NightMode", false)
+        loadSavedPages()
+
+        adapter = ImageAdapter(this, imageList)
+        adapter.isNightMode = isNightMode
+        viewPager.adapter = adapter
+        viewPager.offscreenPageLimit = 3
+        viewPager.layoutDirection = View.LAYOUT_DIRECTION_RTL
+
+        closeButton.visibility = View.GONE
+        menuLayout.visibility = View.GONE
+
+        closeButton.setOnClickListener { finish() }
+        openSettingsButton.setOnClickListener { SettingsFragment().show(supportFragmentManager, "SettingsFragment") }
+        savePageButton.setOnClickListener { saveCurrentPage() }
+        openBookmarkButton.setOnClickListener { showSavedPagesDialog() }
+        openChaptersButton.setOnClickListener {
+            val chaptersFragment = ChaptersFragment()
+            chaptersFragment.setOnPageSelectedListener { page ->
+                navigateToPage(page)
+            }
+            chaptersFragment.show(supportFragmentManager, "chaptersFragment")
+        }
+        shareAppButton.setOnClickListener { ButtonActions.shareApp(it) }
+
+        gestureDetector = GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
+            override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+                toggleUI()
+                return true
+            }
+        })
+
+        viewPager.setOnTouchListener { _, event -> gestureDetector.onTouchEvent(event) }
+    }
+
+    private fun navigateToPage(page: String) {
+        val pageNumber = page.toIntOrNull() ?: return
+        if (pageNumber in 1..totalPages) {
+            viewPager.currentItem = pageNumber - 1 // Subtract 1 because ViewPager uses zero-based indexing
+        } else {
+            Toast.makeText(this, "Invalid page number", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun saveCurrentPage() {
+        val currentPage = viewPager.currentItem
+        if (!savedPages.contains(currentPage)) {
+            savedPages.add(currentPage)
+            savePages()
+            Toast.makeText(this, "Page ${currentPage + 1} enregistrée", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "Page déjà enregistrée", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun showSavedPagesDialog() {
+        if (savedPages.isEmpty()) {
+            Toast.makeText(this, "Aucune page enregistrée", Toast.LENGTH_SHORT).show()
+            return
+        }
+        SavedPagesDialog(savedPages.toMutableList(), ::removeSavedPage) { page ->
+            viewPager.currentItem = page
+        }.show(supportFragmentManager, "SavedPagesDialog")
+    }
+
+    private fun removeSavedPage(page: Int) {
+        savedPages.remove(page)
+        savePages()
+    }
+
+    private fun savePages() {
+        sharedPreferences.edit().putString("savedPages", savedPages.joinToString(",")).apply()
+    }
+
+    private fun loadSavedPages() {
+        sharedPreferences.getString("savedPages", "")?.let {
+            savedPages.clear()
+            savedPages.addAll(it.split(",").mapNotNull { it.toIntOrNull() })
+        }
+    }
+
+    private fun toggleUI() {
+        val isVisible = closeButton.visibility == View.VISIBLE
+        closeButton.visibility = if (isVisible) View.GONE else View.VISIBLE
+        menuLayout.visibility = if (isVisible) View.GONE else View.VISIBLE
+    }
+
+    override fun onNightModeChanged(isEnabled: Boolean) {
+        isNightMode = isEnabled
+        adapter.isNightMode = isNightMode
+        adapter.notifyDataSetChanged()
+        sharedPreferences.edit().putBoolean("NightMode", isNightMode).apply()
+    }
+}
+Fichier: app/src/main\java\com\example\quran_athman_reader\SavedPagesAdapter.kt
+package com.example.quran_athman_reader
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+
+class SavedPagesAdapter(
+    private val savedPages: MutableList<Int>,
+    private val onPageSelected: (Int) -> Unit,
+    private val onRemovePage: (Int) -> Unit
+) : RecyclerView.Adapter<SavedPagesAdapter.SavedPageViewHolder>() {
+
+    class SavedPageViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val pageText: TextView = view.findViewById(R.id.pageNumber)
+        val removeButton: Button = view.findViewById(R.id.removePageButton)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SavedPageViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_saved_page, parent, false)
+        return SavedPageViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: SavedPageViewHolder, position: Int) {
+        val page = savedPages[position]
+
+        holder.pageText.text = "Page $page"
+        holder.pageText.setOnClickListener {
+            onPageSelected(page)
+        }
+
+        holder.removeButton.setOnClickListener {
+            onRemovePage(page)
+            savedPages.removeAt(position)
+            notifyItemRemoved(position)
+            notifyItemRangeChanged(position, savedPages.size)
+        }
+    }
+
+    override fun getItemCount(): Int = savedPages.size
+}
+
+Fichier: app/src/main\java\com\example\quran_athman_reader\SavedPagesDialog.kt
+package com.example.quran_athman_reader
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.Toast
+import androidx.fragment.app.DialogFragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+
+class SavedPagesDialog(
+    private val savedPages: MutableList<Int>,
+    private val onRemovePage: (Int) -> Unit,
+    private val onPageSelected: (Int) -> Unit
+) : DialogFragment() {
+
+    private lateinit var adapter: SavedPagesAdapter
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.dialog_saved_pages, container, false)
+        val recyclerView: RecyclerView = view.findViewById(R.id.recyclerViewPages)
+        val closeButton: Button = view.findViewById(R.id.closeButton)
+
+        // Initialize Adapter
+        adapter = SavedPagesAdapter(savedPages, onPageSelected, onRemovePage)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        recyclerView.adapter = adapter
+
+        if (savedPages.isEmpty()) {
+            Toast.makeText(requireContext(), "Aucune page enregistrée", Toast.LENGTH_SHORT).show()
+            dismiss()
+        }
+
+        closeButton.setOnClickListener { dismiss() }
+        return view
+    }
+}
+
+Fichier: app/src/main\java\com\example\quran_athman_reader\SettingsFragment.kt
+package com.example.quran_athman_reader
+
+import android.content.Context
+import android.content.SharedPreferences
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.Switch
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.fragment.app.DialogFragment
+
+class SettingsFragment : DialogFragment() {
+
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var nightModeSwitch: Switch
+    private lateinit var resetButton: Button
+    private var listener: SettingsChangeListener? = null
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_settings, container, false)
+
+        sharedPreferences = requireActivity().getSharedPreferences("AppSettings", Context.MODE_PRIVATE)
+
+        nightModeSwitch = view.findViewById(R.id.nightModeSwitch)
+        val closeButton: Button = view.findViewById(R.id.closeButton)
+        resetButton = view.findViewById(R.id.resetButton)
+
+        val isNightMode = sharedPreferences.getBoolean("NightMode", false)
+        nightModeSwitch.isChecked = isNightMode
+        setNightMode(isNightMode)
+
+        nightModeSwitch.setOnCheckedChangeListener { _, isChecked ->
+            setNightMode(isChecked)
+            sharedPreferences.edit().putBoolean("NightMode", isChecked).apply()
+            listener?.onNightModeChanged(isChecked)
+        }
+
+        closeButton.setOnClickListener { dismiss() }
+
+        resetButton.setOnClickListener {
+            resetSettings()
+        }
+
+        return view
+    }
+
+    private fun setNightMode(enabled: Boolean) {
+        if (enabled) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        }
+    }
+
+    private fun resetSettings() {
+        sharedPreferences.edit().putBoolean("NightMode", false).apply()
+        nightModeSwitch.isChecked = false
+        setNightMode(false)
+        listener?.onNightModeChanged(false)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is SettingsChangeListener) {
+            listener = context
+        }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        listener = null
+    }
+
+    interface SettingsChangeListener {
+        fun onNightModeChanged(isEnabled: Boolean)
+    }
+}
+
+Fichier: app/src/main\java\com\example\quran_athman_reader\Subcategory_Adapter.kt
+package com.example.quran_athman_reader
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+
+class SubcategoryAdapter(
+    private val subcategories: List<Subcategory>,  // Changed from List<String> to List<Subcategory>
+    private val onItemSelected: (Subcategory) -> Unit  // Changed from (String) to (Subcategory)
+) : RecyclerView.Adapter<SubcategoryAdapter.SubcategoryViewHolder>() {
+
+    inner class SubcategoryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val subcategoryText: TextView = view.findViewById(R.id.subcategoryText) // ✅ Verified
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubcategoryViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_subcategory, parent, false)
+        return SubcategoryViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: SubcategoryViewHolder, position: Int) {
+        val subcategory = subcategories[position]
+        holder.subcategoryText.text = subcategory.name  // Use subcategory.name instead of just subcategory
+        holder.subcategoryText.setOnClickListener {
+            onItemSelected(subcategory)  // Pass the entire Subcategory object
+        }
+    }
+
+    override fun getItemCount(): Int = subcategories.size
+}
+Fichier: app/src/main\res\drawable\close_button_background.xml
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+
+    <solid android:color="@android:color/white"/>
+    <stroke
+        android:width="2dp"
+        android:color="@android:color/darker_gray"/>
+    <size
+        android:width="50dp"
+        android:height="50dp"/>
+    <corners android:radius="25dp"/>
+</shape>
+
+Fichier: app/src/main\res\drawable\error_image.xml
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#FF0000" />
+    <corners android:radius="8dp" />
+</shape>
+Fichier: app/src/main\res\drawable\ic_launcher_background.xml
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#3DDC84"
+        android:pathData="M0,0h108v108h-108z" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M9,0L9,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M19,0L19,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M29,0L29,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M39,0L39,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M49,0L49,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M59,0L59,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M69,0L69,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M79,0L79,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M89,0L89,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M99,0L99,108"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,9L108,9"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,19L108,19"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,29L108,29"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,39L108,39"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,49L108,49"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,59L108,59"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,69L108,69"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,79L108,79"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,89L108,89"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M0,99L108,99"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M19,29L89,29"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M19,39L89,39"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M19,49L89,49"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M19,59L89,59"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M19,69L89,69"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M19,79L89,79"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M29,19L29,89"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M39,19L39,89"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M49,19L49,89"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M59,19L59,89"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M69,19L69,89"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M79,19L79,89"
+        android:strokeWidth="0.8"
+        android:strokeColor="#33FFFFFF" />
+</vector>
+
+Fichier: app/src/main\res\drawable\ic_launcher_foreground.xml
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path android:pathData="M31,63.928c0,0 6.4,-11 12.1,-13.1c7.2,-2.6 26,-1.4 26,-1.4l38.1,38.1L107,108.928l-32,-1L31,63.928z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:endX="85.84757"
+                android:endY="92.4963"
+                android:startX="42.9492"
+                android:startY="49.59793"
+                android:type="linear">
+                <item
+                    android:color="#44000000"
+                    android:offset="0.0" />
+                <item
+                    android:color="#00000000"
+                    android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillType="nonZero"
+        android:pathData="M65.3,45.828l3.8,-6.6c0.2,-0.4 0.1,-0.9 -0.3,-1.1c-0.4,-0.2 -0.9,-0.1 -1.1,0.3l-3.9,6.7c-6.3,-2.8 -13.4,-2.8 -19.7,0l-3.9,-6.7c-0.2,-0.4 -0.7,-0.5 -1.1,-0.3C38.8,38.328 38.7,38.828 38.9,39.228l3.8,6.6C36.2,49.428 31.7,56.028 31,63.928h46C76.3,56.028 71.8,49.428 65.3,45.828zM43.4,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2c-0.3,-0.7 -0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C45.3,56.528 44.5,57.328 43.4,57.328L43.4,57.328zM64.6,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2s-0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C66.5,56.528 65.6,57.328 64.6,57.328L64.6,57.328z"
+        android:strokeWidth="1"
+        android:strokeColor="#00000000" />
+</vector>
+
+Fichier: app/src/main\res\drawable\menu_background.xml
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners android:radius="20dp"/>
+    <solid android:color="#CC000000"/> <!-- Semi-transparent background -->
+    <padding android:left="16dp" android:top="8dp" android:right="16dp" android:bottom="8dp"/>
+</shape>
+
+Fichier: app/src/main\res\drawable\placeholder.xml
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#CCCCCC" />
+    <corners android:radius="8dp" />
+</shape>
+Fichier: app/src/main\res\layout\activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <!-- ViewPager for displaying pages -->
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:clipChildren="false"
+        android:overScrollMode="never"
+        android:paddingStart="0dp"
+        android:paddingEnd="0dp"/>
+
+    <!-- Close Button (Hidden by Default) -->
+    <ImageView
+        android:id="@+id/closeButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:visibility="gone"
+        android:src="@drawable/ic_close"
+        android:contentDescription="Fermer l'application"
+        android:padding="8dp"
+        android:background="@drawable/close_button_background"/>
+
+    <!-- Bottom Menu Layout (Hidden by Default) -->
+    <LinearLayout
+        android:id="@+id/menuLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:padding="12dp"
+        android:background="@drawable/menu_background"
+        android:elevation="8dp">
+
+        <ImageView
+            android:id="@+id/openChapters"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_chapters"
+            android:contentDescription="Ouvrir les chapitres"/>
+
+        <ImageView
+            android:id="@+id/savePage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_save"
+            android:contentDescription="Enregistrer la page"/>
+
+        <ImageView
+            android:id="@+id/shareApp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_share"
+            android:contentDescription="Partager l'application"/>
+
+        <ImageView
+            android:id="@+id/openBookmark"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_bookmark"
+            android:contentDescription="Ouvrir les marque-pages"/>
+
+        <ImageView
+            android:id="@+id/openSettings"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_settings"
+            android:contentDescription="Ouvrir les paramètres"/>
+    </LinearLayout>
+
+</RelativeLayout>
+
+Fichier: app/src/main\res\layout\dialog_saved_pages.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="6dp"
+    android:background="@android:color/white">
+
+    <!-- Titre -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="📖 Saved Pages"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingBottom="10dp"
+        android:textColor="@android:color/black" />
+
+    <!-- Ligne de séparation -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginBottom="8dp"/>
+    <Button
+        android:id="@+id/closeButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="❌ Close"
+        android:backgroundTint="@android:color/holo_green_dark"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Liste des pages enregistrées avec RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewPages"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:nestedScrollingEnabled="false"
+        android:overScrollMode="never"/>
+
+    <!-- Bouton Fermer -->
+
+</LinearLayout>
+
+Fichier: app/src/main\res\layout\fragment_bookmark.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    android:padding="16dp">
+
+    <Button
+        android:id="@+id/closeButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="❌ Fermer"/>
+</LinearLayout>
+
+Fichier: app/src/main\res\layout\fragment_chapters.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    android:padding="16dp">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="⚙ Index"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingBottom="3dp"
+        android:textColor="@android:color/black" />
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginBottom="3dp"/>
+    <!-- Close Button -->
+    <Button
+        android:id="@+id/closeButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="❌ Fermer"
+        android:backgroundTint="@android:color/holo_green_dark"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="8dp"/>
+
+    <!-- RecyclerView for Categories -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chapterRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:nestedScrollingEnabled="false"
+        android:overScrollMode="never"/>
+
+
+</LinearLayout>
+Fichier: app/src/main\res\layout\fragment_settings.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/transparent"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="⚙ Settings"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingBottom="8dp"
+        android:textColor="@android:color/black" />
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginBottom="8dp"/>
+    <Button
+        android:id="@+id/closeButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@android:color/holo_green_dark"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="8dp"
+        android:text="❌ Close"/>
+
+    <Button
+        android:id="@+id/resetButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@android:color/holo_green_dark"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="8dp"
+        android:text="Reset" />
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginBottom="8dp"/>
+
+    <Switch
+        android:id="@+id/nightModeSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Night Mode"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:checked="false"/>
+
+</LinearLayout>
+
+Fichier: app/src/main\res\layout\item_category.xml
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:background="@android:color/white">
+
+    <TextView
+        android:id="@+id/categoryTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:padding="8dp"
+        android:textColor="@android:color/black"/>
+
+    <!-- RecyclerView for Subcategories -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewSubcategories"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:nestedScrollingEnabled="false"
+        android:overScrollMode="never"/>
+</LinearLayout>
+Fichier: app/src/main\res\layout\item_image.xml
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"/>
+</FrameLayout>
+
+Fichier: app/src/main\res\layout\item_saved_page.xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="6dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp"
+    android:background="@android:color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:gravity="center_vertical"
+        android:background="@android:color/white">
+
+        <!-- Page Number -->
+        <TextView
+            android:id="@+id/pageNumber"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="📖 Page Number"
+            android:textSize="16sp"
+            android:textColor="@android:color/black"
+            android:clickable="true"
+            android:foreground="?attr/selectableItemBackground"
+            android:padding="8dp" />
+
+        <!-- Remove Button -->
+        <Button
+            android:id="@+id/removePageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="❌"
+            android:backgroundTint="@android:color/holo_green_dark"
+            android:textColor="@android:color/white"
+            android:elevation="4dp"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
+
+Fichier: app/src/main\res\layout\item_subcategory.xml
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/subcategoryText"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textSize="16sp"
+    android:padding="10dp"
+    android:textColor="@android:color/black"
+    android:gravity="center"
+    android:background="?android:attr/selectableItemBackground"/>
+Fichier: app/src/main\res\mipmap-anydpi-v26\ic_launcher.xml
+<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@drawable/ic_launcher_background" />
+    <foreground android:drawable="@drawable/ic_launcher_foreground" />
+    <monochrome android:drawable="@drawable/ic_launcher_foreground" />
+</adaptive-icon>
+
+Fichier: app/src/main\res\mipmap-anydpi-v26\ic_launcher_round.xml
+<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@drawable/ic_launcher_background" />
+    <foreground android:drawable="@drawable/ic_launcher_foreground" />
+    <monochrome android:drawable="@drawable/ic_launcher_foreground" />
+</adaptive-icon>
+
+Fichier: app/src/main\res\raw\chapters.json
+[
+  {"id": 1, "title": "Al-Fatiha"},
+  {"id": 2, "title": "Al-Baqara"},
+  {"id": 3, "title": "Aal-e-Imran"},
+  {"id": 4, "title": "An-Nisa"},
+  {"id": 5, "title": "Al-Ma'idah"}
+]
+
+Fichier: app/src/main\res\values\colors.xml
+<resources>
+    <color name="primary">#6200EE</color> <!-- Violet Material -->
+    <color name="primaryVariant">#3700B3</color>
+    <color name="secondary">#03DAC5</color> <!-- Bleu-vert -->
+    <color name="secondaryVariant">#018786</color>
+    <color name="background">#121212</color> <!-- Mode sombre -->
+    <color name="surface">#1E1E1E</color>
+    <color name="error">#CF6679</color>
+    <color name="onPrimary">#FFFFFF</color>
+    <color name="onSecondary">#000000</color>
+    <color name="onBackground">#FFFFFF</color>
+    <color name="onSurface">#FFFFFF</color>
+</resources>
+
+Fichier: app/src/main\res\values\strings.xml
+<resources>
+    <string name="app_name">Quran_Athman_Reader</string>
+</resources>
+
+Fichier: app/src/main\res\values\themes.xml
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Quran_Athman_Reader" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+    </style>
+
+    <style name="Theme.Quran_Athman_Reader" parent="Base.Theme.Quran_Athman_Reader" />
+</resources>
+
+Fichier: app/src/main\res\values-night\themes.xml
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Quran_Athman_Reader" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your dark theme here. -->
+        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    </style>
+</resources>
+
+Fichier: app/src/main\res\xml\backup_rules.xml
+<?xml version="1.0" encoding="utf-8"?><!--
+   Sample backup rules file; uncomment and customize as necessary.
+   See https://developer.android.com/guide/topics/data/autobackup
+   for details.
+   Note: This file is ignored for devices older that API 31
+   See https://developer.android.com/about/versions/12/backup-restore
+-->
+<full-backup-content>
+    <!--
+   <include domain="sharedpref" path="."/>
+   <exclude domain="sharedpref" path="device.xml"/>
+-->
+</full-backup-content>
+
+Fichier: app/src/main\res\xml\data_extraction_rules.xml
+<?xml version="1.0" encoding="utf-8"?><!--
+   Sample data extraction rules file; uncomment and customize as necessary.
+   See https://developer.android.com/about/versions/12/backup-restore#xml-changes
+   for details.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <!-- TODO: Use <include> and <exclude> to control what is backed up.
+        <include .../>
+        <exclude .../>
+        -->
+    </cloud-backup>
+    <!--
+    <device-transfer>
+        <include .../>
+        <exclude .../>
+    </device-transfer>
+    -->
+</data-extraction-rules>
+
+Fichier: app/src/test\java\com\example\quran_athman_reader\ExampleUnitTest.kt
+package com.example.quran_athman_reader
+
+import org.junit.Test
+
+import org.junit.Assert.*
+
+/**
+ * Example local unit test, which will execute on the development machine (host).
+ *
+ * See [testing documentation](http://d.android.com/tools/testing).
+ */
+class ExampleUnitTest {
+    @Test
+    fun addition_isCorrect() {
+        assertEquals(4, 2 + 2)
+    }
+}
+

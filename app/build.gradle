@@ -1,0 +1,78 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace "com.education.quran8"
+    compileSdk 34  // Changed from 33 to 34
+
+    defaultConfig {
+        applicationId "com.education.quran8"  // Ensure this matches your updated package name
+        minSdk 24
+        targetSdk 34  // Update to 34 for Play Store compliance
+        versionCode 10009
+        versionName "2.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    lint {
+        baseline file("lint-baseline.xml") // Capture current errors/warnings
+        abortOnError false // Optional: Prevent Lint from failing
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+
+    buildFeatures {
+        viewBinding true // Enables ViewBinding (Optional but recommended)
+    }
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+
+
+    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.cardview:cardview:1.0.0'
+
+    implementation 'androidx.viewpager2:viewpager2:1.0.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'com.google.android.material:material:1.11.0'
+    // Ensure this dependency is at least 1.8.0; update if needed
+    implementation 'androidx.activity:activity:1.8.0'
+
+    implementation 'com.github.bumptech.glide:glide:4.15.1' // Latest version as of now
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.15.1'
+
+    //implementation 'jp.wasabeef:picasso-transformations:2.2.1'
+
+
+
+    // Glide Dependency for Image Loading (Uncomment if needed)
+    // implementation 'com.github.bumptech.glide:glide:4.15.1'
+    // annotationProcessor 'com.github.bumptech.glide:compiler:4.15.1'
+
+
+}

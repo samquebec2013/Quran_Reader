@@ -1,9 +1,18 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Quran_Athman_Reader" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-    </style>
+    <!-- Dark Non Transparent Theme -->
+    <style name="Theme.DarkNonTransparent" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Set the window background to a dark color -->
+        <item name="android:windowBackground">@color/dark_background</item>
+        <!-- Set the status bar color to a dark shade -->
+        <item name="android:statusBarColor">@color/dark_status_bar</item>
+        <!-- Set the navigation bar color to a dark shade -->
+        <item name="android:navigationBarColor">@color/dark_navigation_bar</item>
 
-    <style name="Theme.Quran_Athman_Reader" parent="Base.Theme.Quran_Athman_Reader" />
+        <!-- Define dark primary colors -->
+        <item name="colorPrimary">@color/dark_primary</item>
+        <item name="colorPrimaryVariant">@color/dark_primary_variant</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+        <!-- Ensure primary text is visible -->
+        <item name="android:textColorPrimary">@android:color/white</item>
+    </style>
 </resources>

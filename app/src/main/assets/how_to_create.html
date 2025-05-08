@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دليل إنشاء كتاب في تطبيق قارئ القرآن</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            text-align: center;
+            direction: rtl;
+        }
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        p {
+            font-size: 18px;
+            color: #555;
+        }
+        .slide {
+            display: none;
+            padding: 20px;
+        }
+        .active {
+            display: block;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            background: #27ae60;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background: #219150;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div id="slide1" class="slide active">
+        <h1>إنشاء كتاب في تطبيق قارئ القرآن</h1>
+        <h2>Quran Reader</h2>
+        <p>دليل خطوة بخطوة</p>
+        <img src="images/soon.jpeg" alt="غلاف الكتاب" />
+    </div>
+
+    <div id="slide2" class="slide">
+        <h2>الخطوة 1: تجهيز محتوى الكتاب</h2>
+        <p>• اجمع صفحات الكتاب مسحها ضوئيًا أو تصديرها بصيغة JPG.<br>
+            • تأكد من أن الصور على الأقل بحجم 591x925 بكسل.<br>
+            • قم بتسمية الصفحات بالتسلسل (مثال: page1.jpg, page2.jpg).</p>
+        <img src="images/soon.jpeg" alt="عينة صفحة" />
+    </div>
+
+    <div id="slide3" class="slide">
+        <h2>الخطوة 2: إنشاء ملفات التهيئة</h2>
+        <p>• أنشئ ملف config.json يحتوي على معلومات الكتاب مثل العنوان، عدد الصفحات، والمسارات.<br>
+            • أنشئ ملف آخر title.json (لعناوين الصفحات) و chapters.json للسور.</p>
+        <img src="images/soon.jpeg" alt="عينة ملف التكوين" />
+    </div>
+
+    <div id="slide4" class="slide">
+        <h2>الخطوة 3: تنظيم الملفات</h2>
+        <p>• ضع جميع الملفات في مجلد باسم mybook/ على النحو التالي:</p>
+        <pre>mybook/
+├── config.json
+├── title.json
+├── chapters.json
+├── pages/
+    ├── page1.jpg
+    ├── page2.jpg</pre>
+        <img src="images/soon.jpeg" alt="هيكل المجلد" />
+    </div>
+
+    <div id="slide5" class="slide">
+        <h2>الخطوة 4: ضغط الملفات</h2>
+        <p>• قم بضغط المجلد mybook/ في ملف ZIP باسم mybook.zip.<br>
+            • تأكد من أن جميع الملفات موجودة في جذر الأرشيف.</p>
+        <img src="images/soon.jpeg" alt="عينة ZIP" />
+    </div>
+
+    <div id="slide6" class="slide">
+        <h2>الخطوة 5: تثبيت الكتاب في التطبيق</h2>
+        <p>• انقل الملف mybook.zip إلى جهازك.<br>
+            • افتح التطبيق، انتقل إلى (Home) إدارة الكتب (Manage Books) ثم اضغط إضافة كتاب (Add Book).<br>
+            • اختر الملف mybook.zip وانتظر حتى يتم تثبيته.</p>
+        <img src="images/soon.jpeg" alt="شاشة التثبيت" />
+    </div>
+
+    <div id="slide7" class="slide">
+        <h2>الخطوة 6: التحقق من الكتاب</h2>
+        <p>• تأكد من أن الكتاب يظهر في قائمة الكتب.<br>
+            • تحقق من عرض الصفحات بشكل صحيح.<br>
+            • جرب النقر على العناوين للتأكد من عملها.</p>
+        <img src="images/soon.jpeg" alt="عرض الكتاب" />
+    </div>
+
+    <button onclick="prevSlide()">السابق</button>
+    <button onclick="nextSlide()">التالي</button>
+    
+</div>
+
+<script>
+    let currentSlide = 1;
+    const totalSlides = 7;
+
+    function showSlide(n) {
+        document.querySelectorAll('.slide').forEach(slide => slide.classList.remove('active'));
+        document.getElementById(`slide${n}`).classList.add('active');
+    }
+
+    function nextSlide() {
+        if (currentSlide < totalSlides) {
+            currentSlide++;
+            showSlide(currentSlide);
+        }
+    }
+
+    function prevSlide() {
+        if (currentSlide > 1) {
+            currentSlide--;
+            showSlide(currentSlide);
+        }
+    }
+
+    // Note: window.close() works in WebView if launched from app
+</script>
+</body>
+</html>

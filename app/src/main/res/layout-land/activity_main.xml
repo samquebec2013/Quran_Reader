@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    <!-- ViewPager2 for Quran pages -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"/>
+
+    <!-- Semi-transparent title overlay -->
+    <FrameLayout
+        android:id="@+id/titleOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#80000000"
+        android:padding="8dp"
+        android:visibility="visible"
+        android:alpha="0.9"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="22sp"
+            android:textColor="@android:color/white"
+            android:gravity="center"
+            android:padding="16dp"/>
+    </FrameLayout>
+
+    <!-- Close Button (Top-Right) -->
+    <ImageView
+        android:id="@+id/closeButton"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_gravity="end|top"
+        android:src="@drawable/ic_close"
+        android:contentDescription="Close App"
+        android:padding="8dp"
+        android:background="@drawable/close_button_background"
+        android:visibility="gone" />
+
+        <!-- Bottom Navigation Menu -->
+    <LinearLayout
+        android:id="@+id/menuLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:padding="8dp"
+        android:background="@drawable/menu_background"
+        android:elevation="8dp"
+        android:layout_gravity="bottom"
+        android:weightSum="6">
+
+        <ImageView
+            android:id="@+id/openChapters"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_chapters"
+            android:contentDescription="Open Chapters"
+            android:scaleType="centerInside"
+            android:padding="8dp"/>
+
+        <ImageView
+            android:id="@+id/savePage"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_save"
+            android:contentDescription="Save Page"
+            android:scaleType="centerInside"
+            android:padding="8dp"/>
+
+        <ImageView
+            android:id="@+id/shareApp"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_share"
+            android:contentDescription="Share App"
+            android:scaleType="centerInside"
+            android:padding="8dp"/>
+
+        <ImageView
+            android:id="@+id/openBookmark"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_bookmark"
+            android:contentDescription="Open Bookmarks"
+            android:scaleType="centerInside"
+            android:padding="8dp"/>
+
+        <ImageView
+            android:id="@+id/openSettings"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_settings"
+            android:contentDescription="Open Settings"
+            android:scaleType="centerInside"
+            android:padding="8dp"/>
+        <!-- Home Button (Top-Left) -->
+        <ImageView
+            android:id="@+id/homeButton"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_home"
+            android:scaleType="centerInside"
+            android:contentDescription="Home Button"
+            android:padding="8dp" />
+    </LinearLayout>
+
+    <!-- Page Info Banner (Appears for 4 seconds) -->
+    <LinearLayout
+        android:id="@+id/pageInfoBanner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="0dp"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:background="@drawable/transparent_black_background"
+        android:elevation="8dp"
+        android:visibility="gone"
+        android:alpha="0.9">
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_book"
+            android:padding="4dp"/>
+
+        <TextView
+            android:id="@+id/pageInfoText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="@android:color/white"
+            android:paddingStart="8dp"/>
+    </LinearLayout>
+
+</FrameLayout>

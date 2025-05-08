@@ -1,95 +1,1343 @@
 Fichier: app/src/main\AndroidManifest.xml
 
-Fichier: app/src/main\java\com\example\quran_athman_reader\BookmarkFragment.kt
+Fichier de ressource: app/src/main\assets\books\Douaa\pages\page0.jpg
+
+Fichier de ressource: app/src/main\assets\books\Douaa\pages\page1.jpg
+
+Fichier de ressource: app/src/main\assets\books\Douaa\pages\page10.jpg
+
+Fichier de ressource: app/src/main\assets\books\Douaa\pages\page2.jpg
+
+Fichier de ressource: app/src/main\assets\books\Douaa\pages\page3.jpg
+
+Fichier de ressource: app/src/main\assets\books\Douaa\pages\page4.jpg
+
+Fichier de ressource: app/src/main\assets\books\Douaa\pages\page5.jpg
+
+Fichier de ressource: app/src/main\assets\books\Douaa\pages\page6.jpg
+
+Fichier de ressource: app/src/main\assets\books\Douaa\pages\page7.jpg
+
+Fichier de ressource: app/src/main\assets\books\Douaa\pages\page8.jpg
+
+Fichier de ressource: app/src/main\assets\books\Douaa\pages\page9.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page1.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page10.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page100.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page101.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page102.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page103.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page104.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page105.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page106.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page107.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page108.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page109.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page11.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page110.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page111.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page112.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page113.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page114.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page115.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page116.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page117.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page118.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page119.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page12.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page120.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page121.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page122.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page123.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page124.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page125.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page126.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page127.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page128.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page129.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page13.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page130.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page131.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page132.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page133.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page134.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page135.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page136.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page137.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page138.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page139.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page14.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page140.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page141.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page142.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page143.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page144.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page145.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page146.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page147.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page148.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page149.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page15.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page150.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page151.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page152.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page153.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page154.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page155.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page156.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page157.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page158.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page159.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page16.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page160.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page161.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page162.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page163.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page164.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page165.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page166.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page167.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page168.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page169.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page17.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page170.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page171.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page172.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page173.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page174.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page175.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page176.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page177.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page178.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page179.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page18.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page180.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page181.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page182.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page183.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page184.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page185.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page186.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page187.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page188.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page189.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page19.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page190.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page191.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page192.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page193.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page194.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page195.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page196.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page197.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page198.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page199.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page2.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page20.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page200.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page201.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page202.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page203.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page204.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page205.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page206.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page207.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page208.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page209.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page21.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page210.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page211.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page212.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page213.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page214.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page215.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page216.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page217.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page218.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page219.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page22.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page220.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page221.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page222.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page223.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page224.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page225.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page226.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page227.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page228.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page229.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page23.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page230.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page231.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page232.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page233.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page234.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page235.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page236.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page237.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page238.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page239.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page24.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page240.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page241.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page242.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page243.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page244.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page245.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page246.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page247.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page248.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page249.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page25.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page250.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page251.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page252.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page253.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page254.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page255.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page256.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page257.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page258.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page259.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page26.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page260.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page261.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page262.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page263.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page264.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page265.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page266.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page267.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page268.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page269.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page27.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page270.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page271.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page272.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page273.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page274.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page275.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page276.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page277.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page278.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page279.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page28.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page280.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page281.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page282.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page283.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page284.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page285.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page286.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page287.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page288.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page289.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page29.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page290.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page291.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page292.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page293.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page294.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page295.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page296.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page297.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page298.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page299.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page3.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page30.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page300.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page301.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page302.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page303.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page304.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page305.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page306.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page307.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page308.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page309.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page31.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page310.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page311.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page312.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page313.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page314.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page315.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page316.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page317.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page318.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page319.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page32.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page320.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page321.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page322.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page323.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page324.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page325.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page326.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page327.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page328.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page329.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page33.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page330.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page331.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page332.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page333.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page334.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page335.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page336.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page337.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page338.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page339.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page34.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page340.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page341.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page342.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page343.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page344.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page345.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page346.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page347.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page348.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page349.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page35.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page350.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page351.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page352.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page353.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page354.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page355.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page356.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page357.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page358.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page359.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page36.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page360.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page361.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page362.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page363.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page364.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page365.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page366.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page367.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page368.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page369.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page37.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page370.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page371.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page372.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page373.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page374.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page375.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page376.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page377.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page378.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page379.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page38.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page380.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page381.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page382.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page383.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page384.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page385.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page386.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page387.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page388.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page389.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page39.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page390.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page391.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page392.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page393.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page394.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page395.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page396.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page397.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page398.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page399.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page4.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page40.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page400.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page401.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page402.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page403.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page404.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page405.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page406.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page407.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page408.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page409.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page41.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page410.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page411.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page412.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page413.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page414.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page415.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page416.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page417.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page418.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page419.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page42.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page420.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page421.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page422.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page423.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page424.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page425.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page426.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page427.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page428.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page429.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page43.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page430.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page431.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page432.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page433.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page434.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page435.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page436.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page437.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page438.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page439.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page44.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page440.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page441.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page442.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page443.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page444.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page445.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page446.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page447.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page448.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page449.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page45.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page450.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page451.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page452.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page453.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page454.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page455.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page456.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page457.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page458.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page459.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page46.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page460.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page461.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page462.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page463.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page464.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page465.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page466.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page467.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page468.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page469.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page47.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page470.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page471.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page472.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page473.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page474.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page475.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page476.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page477.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page478.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page479.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page48.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page480.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page481.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page482.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page483.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page484.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page485.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page486.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page49.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page5.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page50.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page51.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page52.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page53.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page54.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page55.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page56.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page57.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page58.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page59.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page6.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page60.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page61.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page62.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page63.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page64.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page65.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page66.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page67.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page68.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page69.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page7.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page70.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page71.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page72.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page73.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page74.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page75.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page76.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page77.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page78.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page79.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page8.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page80.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page81.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page82.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page83.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page84.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page85.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page86.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page87.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page88.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page89.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page9.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page90.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page91.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page92.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page93.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page94.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page95.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page96.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page97.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page98.jpg
+
+Fichier de ressource: app/src/main\assets\books\quran\pages\page99.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page0.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page1.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page10.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page11.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page12.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page13.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page14.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page15.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page16.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page17.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page18.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page19.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page2.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page20.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page21.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page22.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page23.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page24.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page25.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page26.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page27.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page28.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page29.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page3.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page30.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page31.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page32.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page33.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page34.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page35.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page36.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page37.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page38.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page39.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page4.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page40.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page41.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page42.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page43.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page44.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page45.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page46.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page47.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page48.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page49.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page5.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page50.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page51.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page52.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page53.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page6.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page7.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page8.jpg
+
+Fichier de ressource: app/src/main\assets\books\souar_ayat_fadila\pages\page9.jpg
+
+Fichier: app/src/main\java\com\education\Quran8\AboutActivity.kt
+  Classes: AboutActivity
+  Fonctions: onCreate
+
+Fichier: app/src/main\java\com\education\Quran8\BookConfig.kt
+  Classes: BookConfig
+  Fonctions: loadFromAssets
+
+Fichier: app/src/main\java\com\education\Quran8\BookmarkFragment.kt
   Classes: BookmarkFragment
   Fonctions: onCreateView
 
-Fichier: app/src/main\java\com\example\quran_athman_reader\ButtonActions.kt
+Fichier: app/src/main\java\com\education\Quran8\ButtonActions.kt
   Objets: ButtonActions
   Fonctions: openChapters, savePage, shareApp, openBookmark, openSettings
 
-Fichier: app/src/main\java\com\example\quran_athman_reader\ChaptersFragment.kt
-  Classes: ChaptersFragment
-  Fonctions: onCreateView
+Fichier: app/src/main\java\com\education\Quran8\Category_Adapter.kt
+  Classes: CategoryAdapter, CategoryViewHolder
+  Fonctions: onCreateViewHolder, onBindViewHolder, getItemCount
 
-Fichier: app/src/main\java\com\example\quran_athman_reader\ImageAdapter.kt
-  Classes: ImageAdapter
-  Fonctions: getCount, isViewFromObject, instantiateItem, destroyItem, applyNightMode
+Fichier: app/src/main\java\com\education\Quran8\ChaptersFragment.kt
+  Classes: ChaptersFragment, Category, Subcategory
+  Fonctions: onCreateView, loadChapters, setOnPageSelectedListener
 
-Fichier: app/src/main\java\com\example\quran_athman_reader\MainActivity.kt
+Fichier: app/src/main\java\com\education\Quran8\DialogUtils.kt
+  Fonctions: showCustomDialog
+
+Fichier: app/src/main\java\com\education\Quran8\dialog_home_menu.xml
+  Vues (IDs): menu_donate, menu_tafsir, menu_audio, menu_download, menu_manage_books
+
+Fichier: app/src/main\java\com\education\Quran8\FormActivity.kt
+  Classes: FormActivity
+  Fonctions: onCreate
+
+Fichier: app/src/main\java\com\education\Quran8\HomeActivity.kt
+  Classes: HomeActivity, BookCarouselAdapter, BookViewHolder
+  Fonctions: onCreate, onNewIntent, onResume, onConfigurationChanged, showManageBooksDialog, deleteBookFiles, handleZipFile, loadBooksFromAssets, loadAdditionalBooks, sortBooksAlphabetically, saveBooks, setLocale, onNightModeChanged, onScrollOrientationChanged, onScrollDirectionChanged, onFullscreenModeChanged, onKeepScreenOnChanged, onCreateViewHolder, onBindViewHolder, getItemCount
+
+Fichier: app/src/main\java\com\education\Quran8\ImageAdapter.kt
+  Classes: ImageAdapter, ImageViewHolder
+  Fonctions: onCreateViewHolder, onBindViewHolder, getItemCount, applyNightMode
+
+Fichier: app/src/main\java\com\education\Quran8\LanguageManager.kt
+  Objets: LanguageManager
+  Fonctions: setLanguage, loadLanguage
+
+Fichier: app/src/main\java\com\education\Quran8\MainActivity.kt
   Classes: MainActivity
-  Fonctions: onCreate, onSingleTapConfirmed, showSavedPagesDialog, removeSavedPage, savePages, loadSavedPages, onNightModeChanged
+  Fonctions: onCreate, onSingleTapConfirmed, onPageSelected, loadTitles, showWelcomeMessageIfNeeded, updateTitle, adjustBannerPosition, showPageInfoBanner, hidePageInfoBanner, onResume, onNewIntent, onConfigurationChanged, getCurrentPage, navigateToPage, saveCurrentPage, showSavedPagesDialog, removeSavedPage, savePages, loadSavedPages, dispatchTouchEvent, toggleVisibility, configureViewPagerOrientation, onNightModeChanged, onScrollDirectionChanged, onScrollOrientationChanged, onFullscreenModeChanged, onKeepScreenOnChanged, hideTitle, showTitleForLimitedTime
 
-Fichier: app/src/main\java\com\example\quran_athman_reader\SavedPagesDialog.kt
+Fichier: app/src/main\java\com\education\Quran8\SavedPagesAdapter.kt
+  Classes: SavedPagesAdapter, SavedPageViewHolder
+  Fonctions: onCreateViewHolder, onBindViewHolder, getItemCount
+
+Fichier: app/src/main\java\com\education\Quran8\SavedPagesDialog.kt
   Classes: SavedPagesDialog
   Fonctions: onCreateView
 
-Fichier: app/src/main\java\com\example\quran_athman_reader\SettingsFragment.kt
+Fichier: app/src/main\java\com\education\Quran8\SettingsFragment.kt
   Classes: SettingsFragment
-  Fonctions: onCreateView, setNightMode, resetSettings, onAttach, onDetach, onNightModeChanged
+  Fonctions: onCreateView, setNightMode, resetSettings, onAttach, onDetach, onNightModeChanged, onScrollDirectionChanged, onScrollOrientationChanged, onFullscreenModeChanged, onKeepScreenOnChanged
+
+Fichier: app/src/main\java\com\education\Quran8\Subcategory_Adapter.kt
+  Classes: SubcategoryAdapter, SubcategoryViewHolder
+  Fonctions: onCreateViewHolder, onBindViewHolder, getItemCount
+
+Fichier: app/src/main\java\com\education\Quran8\WebViewActivity.kt
+  Classes: WebViewActivity
+  Fonctions: onCreate
+
+Fichier: app/src/main\java\com\education\Quran8\ZoomableImageView.kt
+  Classes: ZoomableImageView, ScaleListener
+  Fonctions: onTouchEvent, onScale, onSizeChanged, setImageDrawable, resetZoom
+
+Fichier de ressource: app/src/main\res\drawable\arrow_left.png
+
+Fichier de ressource: app/src/main\res\drawable\arrow_right.png
+
+Fichier de ressource: app/src/main\res\drawable\bookmark_star.png
+
+Fichier de ressource: app/src/main\res\drawable\book_gris.png
+
+Fichier: app/src/main\res\drawable\close_button_background.xml
+
+Fichier: app/src/main\res\drawable\dark_semi_transparent_background.xml
+
+Fichier: app/src/main\res\drawable\dialog_background.xml
+
+Fichier: app/src/main\res\drawable\error_image.xml
+
+Fichier de ressource: app/src/main\res\drawable\facebook.png
+
+Fichier de ressource: app/src/main\res\drawable\ic_audio.png
+
+Fichier de ressource: app/src/main\res\drawable\ic_book.png
 
 Fichier de ressource: app/src/main\res\drawable\ic_bookmark.png
+
+Fichier de ressource: app/src/main\res\drawable\ic_books.png
 
 Fichier de ressource: app/src/main\res\drawable\ic_chapters.png
 
 Fichier de ressource: app/src/main\res\drawable\ic_close.png
 
+Fichier de ressource: app/src/main\res\drawable\ic_download.png
+
+Fichier de ressource: app/src/main\res\drawable\ic_home.png
+
+Fichier: app/src/main\res\drawable\ic_home1.xml
+
 Fichier: app/src/main\res\drawable\ic_launcher_background.xml
 
 Fichier: app/src/main\res\drawable\ic_launcher_foreground.xml
+
+Fichier de ressource: app/src/main\res\drawable\ic_menu_download.png
+
+Fichier de ressource: app/src/main\res\drawable\ic_menu_play_clip.png
 
 Fichier de ressource: app/src/main\res\drawable\ic_save.png
 
 Fichier de ressource: app/src/main\res\drawable\ic_settings.png
 
+Fichier de ressource: app/src/main\res\drawable\ic_settings1.png
+
 Fichier de ressource: app/src/main\res\drawable\ic_share.png
+
+Fichier de ressource: app/src/main\res\drawable\ic_zoom.png
+
+Fichier: app/src/main\res\drawable\menu_background.xml
 
 Fichier de ressource: app/src/main\res\drawable\page1.jpg
 
-Fichier de ressource: app/src/main\res\drawable\page2.jpg
+Fichier: app/src/main\res\drawable\placeholder.xml
 
-Fichier de ressource: app/src/main\res\drawable\page3.jpg
+Fichier de ressource: app/src/main\res\drawable\recherche.png
+
+Fichier: app/src/main\res\drawable\transparent_black_background.xml
+
+Fichier: app/src/main\res\layout\activity_about.xml
+  Vues (IDs): howToUseButton, createBookButton, contactUsButton
+
+Fichier: app/src/main\res\layout\activity_form.xml
+  Vues (IDs): webView
+
+Fichier: app/src/main\res\layout\activity_home.xml
+  Vues (IDs): closeButton, bookCarousel, aboutLink, menuLayout, manageBooksButton
 
 Fichier: app/src/main\res\layout\activity_main.xml
-  Vues (IDs): scrollView, viewPager, menuLayout, openChapters, savePage, shareApp, openBookmark, openSettings, closeButton, fragmentContainer
+  Vues (IDs): scrollView, viewPager, titleOverlay, titleText, closeButton, menuLayout, openChapters, savePage, shareApp, openBookmark, openSettings, homeButton, pageInfoBanner, pageInfoText
+
+Fichier: app/src/main\res\layout\activity_webview.xml
+  Vues (IDs): webView, closeButton
+
+Fichier: app/src/main\res\layout\dialog_book_name.xml
+  Vues (IDs): bookNameEditText, confirmButton, cancelButton
+
+Fichier: app/src/main\res\layout\dialog_manage_books.xml
+  Vues (IDs): bookSpinner, addBookButton, deleteBookButton, selectDefaultBookButton, closeButton
+
+Fichier: app/src/main\res\layout\dialog_menu.xml
+  Vues (IDs): menu_donate, menu_tafsir, menu_audio, menu_download
 
 Fichier: app/src/main\res\layout\dialog_saved_pages.xml
-  Vues (IDs): closeButton, pagesContainer
+  Vues (IDs): closeButton, recyclerViewPages
+
+Fichier: app/src/main\res\layout\dialog_welcome.xml
+  Vues (IDs): learnAboutButton, dontShowCheckBox, okButton
 
 Fichier: app/src/main\res\layout\fragment_bookmark.xml
   Vues (IDs): closeButton
 
 Fichier: app/src/main\res\layout\fragment_chapters.xml
-  Vues (IDs): chapterListView, closeButton
+  Vues (IDs): closeButton, chapterRecyclerView
 
 Fichier: app/src/main\res\layout\fragment_settings.xml
-  Vues (IDs): closeButton, resetButton, nightModeSwitch, switch2
+  Vues (IDs): closeButton, resetButton, nightModeSwitch, scrollOrientationSwitch, fullscreenSwitch, keepScreenOnSwitch
+
+Fichier: app/src/main\res\layout\item_book_carousel.xml
+  Vues (IDs): bookImage, bookTitle
+
+Fichier: app/src/main\res\layout\item_category.xml
+  Vues (IDs): categoryTitle, recyclerViewSubcategories
 
 Fichier: app/src/main\res\layout\item_image.xml
+  Vues (IDs): imageView
+
+Fichier: app/src/main\res\layout\item_image_portrait.xml
   Vues (IDs): imageView
 
 Fichier: app/src/main\res\layout\item_saved_page.xml
   Vues (IDs): pageNumber, removePageButton
 
+Fichier: app/src/main\res\layout\item_subcategory.xml
+  Vues (IDs): subcategoryText
+
+Fichier: app/src/main\res\layout\page_layout.xml
+  Vues (IDs): imageView
+
+Fichier: app/src/main\res\layout-land\activity_main.xml
+  Vues (IDs): scrollView, viewPager, titleOverlay, titleText, closeButton, menuLayout, openChapters, savePage, shareApp, openBookmark, openSettings, homeButton, pageInfoBanner, pageInfoText
+
+Fichier: app/src/main\res\layout-land\item_image.xml
+  Vues (IDs): scrollView, imageView
+
+Fichier: app/src/main\res\layout-land\item_image_landscape.xml
+  Vues (IDs): scrollView, imageView
+
 Fichier: app/src/main\res\mipmap-anydpi-v26\ic_launcher.xml
 
 Fichier: app/src/main\res\mipmap-anydpi-v26\ic_launcher_round.xml
+
+Fichier de ressource: app/src/main\res\mipmap-hdpi\icon.png
 
 Fichier de ressource: app/src/main\res\mipmap-hdpi\ic_launcher.webp
 
 Fichier de ressource: app/src/main\res\mipmap-hdpi\ic_launcher_round.webp
 
+Fichier de ressource: app/src/main\res\mipmap-mdpi\icon.png
+
 Fichier de ressource: app/src/main\res\mipmap-mdpi\ic_launcher.webp
 
 Fichier de ressource: app/src/main\res\mipmap-mdpi\ic_launcher_round.webp
+
+Fichier de ressource: app/src/main\res\mipmap-xhdpi\icon.png
 
 Fichier de ressource: app/src/main\res\mipmap-xhdpi\ic_launcher.webp
 
 Fichier de ressource: app/src/main\res\mipmap-xhdpi\ic_launcher_round.webp
 
+Fichier de ressource: app/src/main\res\mipmap-xxhdpi\icon.png
+
 Fichier de ressource: app/src/main\res\mipmap-xxhdpi\ic_launcher.webp
 
 Fichier de ressource: app/src/main\res\mipmap-xxhdpi\ic_launcher_round.webp
+
+Fichier de ressource: app/src/main\res\mipmap-xxxhdpi\icon.png
 
 Fichier de ressource: app/src/main\res\mipmap-xxxhdpi\ic_launcher.webp
 
@@ -101,12 +1349,14 @@ Fichier: app/src/main\res\values\strings.xml
 
 Fichier: app/src/main\res\values\themes.xml
 
+Fichier: app/src/main\res\values-ar\strings.xml
+
 Fichier: app/src/main\res\values-night\themes.xml
 
 Fichier: app/src/main\res\xml\backup_rules.xml
 
 Fichier: app/src/main\res\xml\data_extraction_rules.xml
 
-Fichier: app/src/test\java\com\example\quran_athman_reader\ExampleUnitTest.kt
+Fichier: app/src/test\java\com\education\Quran8\ExampleUnitTest.kt
   Classes: ExampleUnitTest
   Fonctions: addition_isCorrect

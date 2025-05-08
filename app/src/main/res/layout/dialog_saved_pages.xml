@@ -4,30 +4,43 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="6dp"
-    android:background="@android:color/white">
+    android:background="#FFF8E1">
+
+    <!-- Titre -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="📖 Saved Pages"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingBottom="10dp"
+        android:textColor="@color/dark_primary_variant2" />
+
+    <!-- Ligne de séparation -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginBottom="8dp"/>
     <Button
         android:id="@+id/closeButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Close"/>
+        android:gravity="center"
+        android:text="Close"
+        android:backgroundTint="#DBC91B"
+        android:textColor="@android:color/black"
+        android:layout_marginTop="8dp"/>
 
-    <TextView
-        android:layout_width="370dp"
-        android:layout_height="wrap_content"
-        android:text="Saved Pages"
-        android:textSize="18sp"
-        android:textStyle="bold" />
-
-    <ScrollView
+    <!-- Liste des pages enregistrées avec RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewPages"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:nestedScrollingEnabled="false"
+        android:overScrollMode="never"/>
 
-        <LinearLayout
-            android:id="@+id/pagesContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"/>
-    </ScrollView>
-
+    <!-- Bouton Fermer -->
 
 </LinearLayout>
