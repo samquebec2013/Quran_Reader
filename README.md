@@ -41,7 +41,7 @@ Android Studio will automatically:
 
 This project is provided for **non-commercial use only**.  
 Ads or monetized derivatives are **strictly prohibited**.  
-All image assets are **copyrighted** by the author.
+
 
 ---
 
